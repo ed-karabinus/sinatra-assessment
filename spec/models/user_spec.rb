@@ -1,10 +1,12 @@
+require 'spec_helper'
+
 describe 'User' do 
   before do 
     @user = User.create(:username => "T$+& 123 .()\'", :email => "test123@gmail.com", :password => "test")
   end
   
   it 'can slug the username' do
-    expect(@user.slug).to eq("Tsplusand-123-")
+    expect(@user.slug).to eq("tsplusand-123-")
   end
 
   it 'can find a user based on the slug' do 

@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   validates_presence_of :email, on: :create
 
   def slug
-    self.username.downcase.gsub(/[\$\&\+\s]/, {'$' => 's', '&' => 'and', '+' => '+', ' ' => '-'}).gsub(/[\'\.\(\)\,]/, '')
+    self.username.downcase.gsub(/[\$\&\+\s]/, {'$' => 's', '&' => 'and', '+' => 'plus', ' ' => '-'}).gsub(/[\'\.\(\)\,]/, '')
   end
 
   def self.find_by_slug(slug)
