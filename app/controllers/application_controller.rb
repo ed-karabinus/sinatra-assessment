@@ -12,5 +12,23 @@ class ApplicationController < Sinatra::Base
   get '/' do
     erb :index
   end
+
+  get '/signup' do
+    if is_logged_in?
+      redirect to('/categories')
+    else
+      erb :'users/create_user'
+    end
+  end
+
+  helpers do
+    def is_logged_in?
+      !!session[:id]
+    end
+
+    def current_user
+      User.find_by(id: session[:id])
+    end
+  end
   
 end

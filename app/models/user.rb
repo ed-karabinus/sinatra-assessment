@@ -1,4 +1,6 @@
 class User < ActiveRecord::Base
+  has_many :categories
+  has_many :components, through: :categories
   has_secure_password
   validates_presence_of :username, on: :create
   validates_presence_of :password, on: :create
