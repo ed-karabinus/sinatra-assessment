@@ -21,6 +21,14 @@ class ApplicationController < Sinatra::Base
     end
   end
 
+  get '/login' do
+    if is_logged_in?
+      redirect to('/categories')
+    else
+      erb :'users/login'
+    end
+  end
+
   post '/signup' do
     @user = User.new(username: params[:username], email: params[:email], password: params[:password])
     if @user.save
