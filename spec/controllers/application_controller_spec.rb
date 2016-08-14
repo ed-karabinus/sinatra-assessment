@@ -9,6 +9,45 @@ describe ApplicationController do
     end
   end
 
+  describe 'login' do 
+    it 'loads the login page' do
+      get '/login'
+      expect(last_response.status).to eq(200)
+    end
+
+    it "loads the user's categories index after login" do
+      params = {
+        :username => "user1",
+        :password => "user1password"
+      }
+
+      user = User.create(params.merge(:email => "user1@email.com"))
+
+      post '/login', params
+      expect(last_response.status).to eq(302)
+
+      follow_redirect!
+      expect(last_response.status).to eq(200)
+      expect(last_response.body).to include("Welcome,")
+    end
+
+    it 'does not let the user view login page if already logged in' do
+      params = {
+        :username => "user1",
+        :password => "user1password"
+      }
+
+      user = User.create(params)
+
+      post '/login', params
+      session = { :id => "user.id" }
+
+      get '/login'
+      expect(last_response.location).to include("/categories")
+    end
+  end
+
+
   describe 'user show page' do 
     it "shows all a single user's categories" do
       user1 = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")

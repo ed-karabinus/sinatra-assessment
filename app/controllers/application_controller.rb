@@ -48,6 +48,16 @@ class ApplicationController < Sinatra::Base
     end
   end
 
+  post '/login' do 
+    @user = User.find_by(username: params[:username])
+    if @user.authenticate(params[:password])
+      session[:id] = @user.id
+      redirect to('/categories')
+    else
+      redirect to('/login')
+    end
+  end
+
   post '/signup' do
     @user = User.new(username: params[:username], email: params[:email], password: params[:password])
     if @user.save
