@@ -23,4 +23,24 @@ describe ApplicationController do
     end
   end
 
+  describe 'index action' do
+    context 'logged in' do 
+      it 'lets a user view their categories index if logged in' do 
+        user1 = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+        category1 = Category.create(:name => "category1", :description => "Category 1 description.")
+
+        user2 = User.create(:username => "user2", :email => "user2@email.com", :password => "user2password")
+        category2 = Category.create(:name => "category2", :description => "Category 2 description.")
+
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+        click_button 'submit'
+        visit '/categories'
+        expect(page.body).to include(category1)
+        expect(page.body).to_not include(category2)
+      end
+    end
+
 end

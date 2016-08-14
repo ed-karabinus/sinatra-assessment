@@ -15,10 +15,21 @@ class ApplicationController < Sinatra::Base
 
   get '/users/:slug' do 
     @user = User.find_by_slug(params[:slug])
-    @categories = Categories.all.find do |category|
+    @categories = Category.all.find do |category|
       category.user_id == @user.id 
     end
     erb :'categories/categories'
+  end
+
+  get '/categories' do
+    if is_logged_in?
+      @categories = Category.all.find do |category|
+        category.user_id == current_user.id
+      end
+      erb :'categories/categories'
+    else
+      redirect to('/login')
+    end
   end
 
   get '/signup' do
