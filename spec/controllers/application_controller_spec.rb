@@ -43,4 +43,11 @@ describe ApplicationController do
       end
     end
 
+    context 'logged out' do 
+      it 'does not let a user view the categories index if not logged in' do
+        get '/categories'
+        expect(last_response.location).to include("/login")
+      end
+    end
+  end
 end
