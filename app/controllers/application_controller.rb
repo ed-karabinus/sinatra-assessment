@@ -32,6 +32,14 @@ class ApplicationController < Sinatra::Base
     end
   end
 
+  get '/categories/new' do 
+    if is_logged_in?
+      erb :'categories/create_category'
+    else
+      redirect to('/login')
+    end
+  end
+
   get '/signup' do
     if is_logged_in?
       redirect to('/categories')
@@ -55,6 +63,15 @@ class ApplicationController < Sinatra::Base
       redirect to('/categories')
     else
       redirect to('/login')
+    end
+  end
+
+  post '/categories' do
+    @category = Category.new(name: params[:name], description: params[:description], user_id: session[:id])
+    if @category.save
+      redirect to("/categories/#{@category.id}")
+    else
+      redirect to('/categories/new')
     end
   end
 
