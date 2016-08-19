@@ -62,6 +62,23 @@ describe ApplicationController do
     end
   end
 
+  describe 'new action' do
+    context 'logged in' do
+      it 'lets user view new category form if logged in' do
+        user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+
+        click_button 'submit'
+        visit '/categories/new'
+        expect(page.status_code).to eq(200)
+      end
+    end
+  end
+
   describe 'index action' do
     context 'logged in' do 
       it 'lets a user view their categories index if logged in' do 
