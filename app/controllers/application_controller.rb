@@ -21,20 +21,29 @@ class ApplicationController < Sinatra::Base
     erb :'categories/categories'
   end
 
+  get '/categories/new' do 
+    if is_logged_in?
+      erb :'categories/create_category'
+    else
+      redirect to('/login')
+    end
+  end
+
+  get '/categories/:id' do
+    if is_logged_in?
+      @category = Category.find_by(id: params[:id])
+      erb :'categories/show_category'
+    else
+      redirect to('/login')
+    end
+  end
+
   get '/categories' do
     if is_logged_in?
       @categories = Category.all.find_all do |category|
         category.user_id == current_user.id
       end
       erb :'categories/categories'
-    else
-      redirect to('/login')
-    end
-  end
-
-  get '/categories/new' do 
-    if is_logged_in?
-      erb :'categories/create_category'
     else
       redirect to('/login')
     end

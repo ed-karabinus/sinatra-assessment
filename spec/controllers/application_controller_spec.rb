@@ -76,6 +76,27 @@ describe ApplicationController do
         visit '/categories/new'
         expect(page.status_code).to eq(200)
       end
+
+      it 'lets user create a category if they are logged in' do
+        user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+        click_button 'submit'
+
+        visit '/categories/new'
+        fill_in(:name, :with => "category1")
+        fill_in(:description, :with => "Category 1 description.")
+        click_button 'submit'
+
+        user = User.find_by(:username => "user1")
+        category = Category.find_by(:name => "category1")
+        expect(category).to be_instance_of(Category)
+        expect(category.user_id).to eq(user.id)
+        expect(page.status_code).to eq(200)
+      end
     end
   end
 

@@ -1,0 +1,8 @@
+<p><%= User.find_by(id: @category.user_id).username %>'s category is called:</p>
+<p><%= @category.name %></p>
+<p><a href="/categories/<%= @category.id %>/edit">Edit Category</a></p>
+<form method="post" action="/categories/<%= @category.id %>/delete">
+<input id="hidden" type="hidden" name="_method" value="DELETE">
+<input type="submit" value="Delete Category">
+</form>
+<p><a href="/categories">Back to all categories.</a></p>
