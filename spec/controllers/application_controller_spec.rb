@@ -9,6 +9,35 @@ describe ApplicationController do
     end
   end
 
+  describe 'Signup Page' do 
+
+    it 'loads the signup page' do 
+      get '/signup'
+      expect(last_response.status).to eq(200)
+    end
+
+    it 'signup directs user to categories index' do 
+      params = {
+        :username => "user1",
+        :password => "user1password",
+        :email => "user1@email.com"
+      }
+      post '/signup', params
+      expect(last_response.location).to include('/categories')
+    end
+
+    it 'does not let a user sign up without a username' do
+      params = {
+        :username => "",
+        :email => "user1@email.com",
+        :password => "user1password"
+      }
+      post '/signup', params
+      expect(last_response.location).to include('/signup')
+    end
+
+  end
+
   describe 'login' do 
     it 'loads the login page' do
       get '/login'

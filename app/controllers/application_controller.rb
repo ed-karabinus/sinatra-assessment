@@ -90,7 +90,7 @@ class ApplicationController < Sinatra::Base
       session[:id] = @user.id
       redirect to('/categories')
     else
-      redirect to('login')
+      redirect to('/signup')
     end
   end
 
