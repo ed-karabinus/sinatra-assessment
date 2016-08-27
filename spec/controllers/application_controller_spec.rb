@@ -56,7 +56,7 @@ describe ApplicationController do
       expect(last_response.location).to include('/signup')
     end
 
-    it 'does not let a logged in user view the signp page' do 
+    it 'does not let a logged in user view the signup page' do 
       params = {
         :username => "user1",
         :email => "user1@email.com",
@@ -69,7 +69,7 @@ describe ApplicationController do
       get '/signup'
       expect(last_response.location).to include('/categories')
     end
-    
+
   end
 
   describe 'login' do 
@@ -110,6 +110,19 @@ describe ApplicationController do
     end
   end
 
+  describe 'logout' do 
+    it 'lets a user logout if they are already logged in' do 
+      params = {
+        :username => "user1",
+        :password => "user1password"
+      }
+      user = User.create(params.merge(:email => "user1@email.com"))
+
+      post '/login', params
+      get '/logout'
+      expect(last_response.location).to include('/login')
+    end
+  end
 
   describe 'user show page' do 
     it "shows all a single user's categories" do
