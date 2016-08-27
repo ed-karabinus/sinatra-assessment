@@ -122,6 +122,28 @@ describe ApplicationController do
       get '/logout'
       expect(last_response.location).to include('/login')
     end
+
+    it 'does not let a user logout if not logged in' do
+      get '/logout'
+      expect(last_response.location).to include('/')
+    end
+
+    it 'does not load /categories if user not logged in' do
+      get '/categories'
+      expect(last_response.location).to include('/login')
+    end
+
+    it 'does load /categories if user is logged in' do
+      user = User.create(:username => "user1", :email => "user1@emal.com", :password => "user1password")
+      
+      visit '/login'
+
+      fill_in(:username, :with => "user1")
+      fill_in(:password, :with => "user1password")
+      click_button 'submit'
+
+      expect(page.current_path).to eq('/categories')
+    end
   end
 
   describe 'user show page' do 
