@@ -32,6 +32,7 @@ class ApplicationController < Sinatra::Base
   get '/categories/:id' do
     if is_logged_in?
       @category = Category.find_by(id: params[:id])
+      @user = User.find_by(id: @category.user_id)
       erb :'categories/show_category'
     else
       redirect to('/login')

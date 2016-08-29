@@ -275,4 +275,35 @@ describe ApplicationController do
       end
     end
   end
+
+  describe 'show action' do 
+    context 'logged in' do 
+      it 'displays a single category' do
+        user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+        category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
+
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+        click_button 'submit'
+
+        visit "/categories/#{category.id}"
+        expect(page.status_code).to eq(200)
+        expect(page.body).to include("Delete Category")
+        expect(page.body).to include(category.name)
+        expect(page.body).to include(category.description)
+        expect(page.body).to include("Edit Category")
+      end
+    end
+
+    context 'logged out' do
+      it 'does not let a user view a category' do
+        user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+        category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
+        get "/categories/#{category.id}"
+        expect(last_response.location).to include('/login')
+      end
+    end
+  end
 end
