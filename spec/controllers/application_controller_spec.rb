@@ -340,6 +340,25 @@ describe ApplicationController do
         visit "/categories/#{category2.id}/edit"
         expect(page.current_path).to include('/categories')
       end
+
+      it 'lets a user edit their own category if they are logged in' do 
+        user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+        category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+        click_button 'submit'
+        visit "/categories/#{category.id}/edit"
+
+        fill_in(:name, :with => "modified_category1")
+        fill_in(:description, :with => "Modified Category 1 description.")
+        click_button 'submit'
+        expect(Category.find_by(:name => "category1")).to eq(nil)
+        expect(Category.find_by(:name => "modified_category1")).to be_instance_of(Category)
+
+        expect(page.status_code).to eq(200)
+      end
     end
   end
 
