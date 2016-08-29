@@ -39,6 +39,15 @@ class ApplicationController < Sinatra::Base
     end
   end
 
+  get '/categories/:id/edit' do 
+    if is_logged_in?
+      @category = Category.find_by(id: params[:id])
+      erb :'categories/edit_category'
+    else
+      redirect to('/login')
+    end
+  end
+
   get '/categories' do
     if is_logged_in?
       @categories = Category.all.find_all do |category|
@@ -101,6 +110,15 @@ class ApplicationController < Sinatra::Base
       redirect to('/categories')
     else
       redirect to('/signup')
+    end
+  end
+
+  patch '/categories/:id/edit' do
+    @category = Category.find_by(id: params[:id])
+    if @category.update(name: params[:name], description: params[:description])
+      redirect to("/categories/#{params[:id]}")
+    else
+      redirect to("/categories/#{params[:category]}/edit")
     end
   end
 

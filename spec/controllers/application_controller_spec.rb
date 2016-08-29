@@ -306,4 +306,23 @@ describe ApplicationController do
       end
     end
   end
+
+  describe 'edit action' do 
+    context 'logged in' do 
+      it 'lets a user view category edit form if they are logged in' do 
+        user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+        category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+        click_button 'submit'
+        visit '/categories/1/edit'
+        expect(page.status_code).to eq(200)
+        expect(page.body).to include(category.name)
+        expect(page.body).to include(category.description)
+      end
+    end
+  end
+
 end
