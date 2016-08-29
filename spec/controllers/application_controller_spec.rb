@@ -322,6 +322,24 @@ describe ApplicationController do
         expect(page.body).to include(category.name)
         expect(page.body).to include(category.description)
       end
+
+      it 'does not let a user edit a category they did not create' do
+        user1 = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+        category1 = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user1.id)
+
+        user2 = User.create(:username => "user2", :email => "user2@email.com", :password => "user2password")
+        category2 = Category.create(:name => "category2", :description => "Category 2 description.", :user_id => user2.id)
+
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+        click_button 'submit'
+        session = {}
+        session[:user_id] = user1.id
+        visit "/categories/#{category2.id}/edit"
+        expect(page.current_path).to include('/categories')
+      end
     end
   end
 
