@@ -375,6 +375,22 @@ describe ApplicationController do
         expect(Category.find_by(:description => "")).to be(nil)
         expect(page.current_path).to eq("/categories/#{category.id}/edit")
       end
+
+      it 'does not let a user edit a category with blank text for the name' do
+        user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+        category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+        click_button 'submit'
+        visit "/categories/#{category.id}/edit"
+
+        fill_in(:name, :with => "")
+        click_button 'submit'
+        expect(Category.find_by(:name => "")).to be(nil)
+        expect(page.current_path).to eq("/categories/#{category.id}/edit")
+      end
     end
 
     context "logged out" do
