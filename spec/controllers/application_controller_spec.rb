@@ -401,4 +401,22 @@ describe ApplicationController do
     end
   end
 
+  describe 'delete action' do
+    context 'logged in' do
+      it 'lets a user delete their own category if they are logged in' do
+        user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+        category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+        click_button 'submit'
+
+        visit "/categories/#{category.id}"
+        click_button "Delete Category"
+        expect(page.status_code).to eq(200)
+        expect(Category.find_by(:description => "Category 1 description.")).to eq(nil)
+      end
+    end
+  end
 end

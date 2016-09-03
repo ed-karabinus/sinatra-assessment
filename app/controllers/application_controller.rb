@@ -122,6 +122,16 @@ class ApplicationController < Sinatra::Base
     end
   end
 
+  delete '/categories/:id/delete' do
+    @category = Category.find_by(id: params[:id])
+    if is_logged_in? && @category.user_id == session[:id]
+      @category.destroy
+      redirect to('/categories')
+    else
+      redirect to("/categories/#{params[:id]}")
+    end
+  end
+
   helpers do
     def is_logged_in?
       !!session[:id]
