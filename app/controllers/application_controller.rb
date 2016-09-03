@@ -118,7 +118,7 @@ class ApplicationController < Sinatra::Base
     if @category.update(name: params[:name], description: params[:description])
       redirect to("/categories/#{params[:id]}")
     else
-      redirect to("/categories/#{params[:category]}/edit")
+      redirect to("/categories/#{params[:id]}/edit")
     end
   end
 
