@@ -418,5 +418,13 @@ describe ApplicationController do
         expect(Category.find_by(:description => "Category 1 description.")).to eq(nil)
       end
     end
+
+    context 'logged out' do
+      it 'does not let a user delete a category if not logged in' do
+        category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => 1)
+        visit "/categories/#{category.id}"
+        expect(page.current_path).to eq("/login")
+      end
+    end
   end
 end
