@@ -417,6 +417,26 @@ describe ApplicationController do
         expect(page.status_code).to eq(200)
         expect(Category.find_by(:description => "Category 1 description.")).to eq(nil)
       end
+
+      it 'does not let a user delete a category they did not create' do
+        user1 = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+        category1 = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user1.id)
+
+        user2 = User.create(:username => "user2", :email => "user2@email.com", :password => "user2password")
+        category2 = Category.create(:name => "category2", :description => "Category 2 description.", :user_id => user2.id)
+
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+        click_button 'submit'
+
+        visit "/categories/#{category2.id}"
+        click_button "Delete Category"
+        expect(page.status_code).to eq(200)
+        expect(Category.find_by(:name => "category1")).to be_instance_of(Category)
+        expect(page.current_path).to include('/categories')
+      end
     end
 
     context 'logged out' do
