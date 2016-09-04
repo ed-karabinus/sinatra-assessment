@@ -323,6 +323,19 @@ describe ApplicationController do
         expect(page.body).to include(category.description)
       end
 
+      it 'submits the edit form via a PATCH request' do
+        user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+        category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+        click_button 'submit'
+        visit '/categories/1/edit'
+
+        expect(find("#hidden", :visible => :false).value).to eq("PATCH")
+      end
+
       it 'does not let a user edit a category they did not create' do
         user1 = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
         category1 = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user1.id)
@@ -416,6 +429,19 @@ describe ApplicationController do
         click_button "Delete Category"
         expect(page.status_code).to eq(200)
         expect(Category.find_by(:description => "Category 1 description.")).to eq(nil)
+      end
+
+      it 'deletes a category via a DELETE request' do
+        user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+        category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+        click_button 'submit'
+
+        visit "/categories/#{category.id}"
+        expect(find("#hidden", :visible => :false).value).to eq("DELETE")
       end
 
       it 'does not let a user delete a category they did not create' do
