@@ -147,10 +147,11 @@ describe ApplicationController do
   end
 
   describe 'user show page' do 
-    it "shows all a single user's categories" do
-      user1 = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
-      category1 = Category.create(:name => "category1", :description => "Category 1 description.")
-      category2 = Category.create(:name => "category2", :description => "Category 2 description.")
+    user1 = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+    category1 = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user1.id)
+    category2 = Category.create(:name => "category2", :description => "Category 2 description.", :user_id => user1.id)
+
+    it "shows all of a user's categories" do
       get "/users/#{user1.slug}"
 
       expect(last_response.body).to include("category1")
@@ -158,9 +159,20 @@ describe ApplicationController do
       expect(last_response.body).to include("Category 1 description.")
       expect(last_response.body).to include("Category 2 description.")
     end
+
+    it "shows all of a user's components" do
+      component1 = Component.create(:name => "component1", :description => "Component 1 description.", :category_id => category1.id)
+      component2 = Component.create(:name => "component2", :description => "Component 2 description.", :category_id => category2.id)
+
+      get "/users/#{user1.slug}"
+      expect(last_response.body).to include("component1")
+      expect(last_response.body).to include("component2")
+      expect(last_response.body).to include("Component 1 description.")
+      expect(last_response.body).to include("Component 2 description.")
+    end
   end
 
-  describe 'new action' do
+  describe 'new category action' do
     context 'logged in' do
       it 'lets user view new category form if logged in' do
         user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
@@ -246,7 +258,7 @@ describe ApplicationController do
     end
   end
 
-  describe 'index action' do
+  describe 'categories index action' do
     context 'logged in' do 
       it 'lets a user view their categories index if logged in' do 
         user1 = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
@@ -276,7 +288,7 @@ describe ApplicationController do
     end
   end
 
-  describe 'show action' do 
+  describe 'show categories action' do 
     context 'logged in' do 
       it 'displays a single category' do
         user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
@@ -307,7 +319,7 @@ describe ApplicationController do
     end
   end
 
-  describe 'edit action' do 
+  describe 'edit categories action' do 
     context 'logged in' do 
       it 'lets a user view category edit form if they are logged in' do 
         user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
@@ -414,7 +426,7 @@ describe ApplicationController do
     end
   end
 
-  describe 'delete action' do
+  describe 'delete categories action' do
     context 'logged in' do
       it 'lets a user delete their own category if they are logged in' do
         user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
