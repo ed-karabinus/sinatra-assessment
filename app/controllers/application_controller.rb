@@ -59,6 +59,11 @@ class ApplicationController < Sinatra::Base
     end
   end
 
+  get '/components' do
+    if is_logged_in?
+      @components = Component.all.find_all do |component|
+        
+
   get '/signup' do
     if is_logged_in?
       redirect to('/categories')

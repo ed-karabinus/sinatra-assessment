@@ -485,4 +485,36 @@ describe ApplicationController do
       end
     end
   end
+
+  describe 'components index action' do
+    context 'logged in' do 
+      it 'lets a user view their components index if logged in' do 
+        user1 = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+        category1 = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user1.id)
+        component1 = Component.create(:name => "component1", :description => "Component 1 description.", :category_id => category1.id)
+
+        user2 = User.create(:username => "user2", :email => "user2@email.com", :password => "user2password")
+        category2 = Category.create(:name => "category2", :description => "Category 2 description.", :user_id => user2.id)
+        component2 = Component.create(:name => "component2", :description => "Component 2 description.", :category_id => category2.id)
+
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+        click_button 'submit'
+        visit '/components'
+        expect(page.body).to include(component1.name)
+        expect(page.body).to include(component1.description)
+        expect(page.body).to_not include(component2.name)
+        expect(page.body).to_not include(component2.description)
+      end
+    end
+
+    context 'logged out' do 
+      it 'does not let a user view the components index if not logged in' do
+        get '/components'
+        expect(last_response.location).to include("/login")
+      end
+    end
+  end
 end

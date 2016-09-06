@@ -1,0 +1,7 @@
+<h1>Welcome, <%= current_user.username %>.</h1>
+<% @components.each do |component| %>
+  <h2><a href="/components/<%= component.id %>"><%= component.name %></h2>
+  <p><%= component.description %></a></p>
+<% end if @components %>
+<p><a href="/components/new">Create a new component!</a></p>
+<p><a href="/logout">Log out</a></p>
