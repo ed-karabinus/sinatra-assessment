@@ -517,4 +517,85 @@ describe ApplicationController do
       end
     end
   end
+
+  describe 'new component action' do
+    context 'logged in' do
+      user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+      
+      it 'lets user view new component form if logged in' do
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+
+        click_button 'submit'
+        visit '/components/new'
+        expect(page.status_code).to eq(200)
+      end
+
+      it 'lets user create a component that is unique to them if they are logged in' do
+        user2 = User.create(:username => "user2", :email => "user2@email.com", :password => "user2password")
+
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+        click_button 'submit'
+
+        visit '/components/new'
+        fill_in(:name, :with => "component1")
+        fill_in(:description, :with => "Component 1 description.")
+        click_button 'submit'
+
+        user = User.find_by(:username => "user1")
+        user2 = User.find_by(:username => "user2")
+        component = Component.find_by(:name => "component1")
+        expect(component).to be_instance_of(Component)
+        expect(component.user_id).to eq(user.id)
+        expect(component.user_id).not_to eq(user2.id)
+        expect(page.status_code).to eq(200)
+      end
+
+      it 'does not let a user create a component with a null name' do 
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+        click_button 'submit'
+
+        visit '/components/new'
+
+        fill_in(:name, :with => "")
+        fill_in(:description, :with => "Component 1 description.")
+        click_button 'submit'
+
+        expect(Component.find_by(:name => "")).to eq(nil)
+        expect(page.current_path).to eq('/components/new')
+      end
+
+      it 'does not let a user create a component with a null description' do
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+        click_button 'submit'
+
+        visit '/components/new'
+
+        fill_in(:name, :with => "component1")
+        fill_in(:description, :with => "")
+        click_button 'submit'
+
+        expect(Component.find_by(:description => "")).to eq(nil)
+        expect(page.current_path).to eq('/categories/new')
+      end
+    end
+
+    context 'logged out' do
+      it 'does not let a user view new component form if not logged in' do 
+        get '/components/new'
+        expect(last_response.location).to include('/login')
+      end
+    end
+  end
 end

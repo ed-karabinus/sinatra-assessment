@@ -1,0 +1,13 @@
+<form method="post" action="/components">
+  <p>Your component's name:</p>
+  <input type="text" name="name">
+  <p>Your component's description:</p>
+  <input type="text" name="description">
+  <p>Your component's category:</p>
+  <ul>
+  <% Category.all.each do |category| %>
+    <li><input type="radio" name="category_id" value="<%= "#{category.id}" %>"><%= "#{category.name}" %></li>
+  <% end if Category.all %>
+  </ul>
+  <input type="submit" value="submit">
+</form>

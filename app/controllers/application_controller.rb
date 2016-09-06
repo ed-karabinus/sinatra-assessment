@@ -29,6 +29,14 @@ class ApplicationController < Sinatra::Base
     end
   end
 
+  get '/components/new' do 
+    if is_logged_in?
+      erb :'components/create_component'
+    else
+      redirect to('/login')
+    end
+  end
+
   get '/categories/:id' do
     if is_logged_in?
       @category = Category.find_by(id: params[:id])
@@ -62,7 +70,13 @@ class ApplicationController < Sinatra::Base
   get '/components' do
     if is_logged_in?
       @components = Component.all.find_all do |component|
-        
+        Category.find_by(id: component.category_id).user_id == current_user.id 
+      end
+      erb :'components/components'
+    else
+      redirect to('/login')
+    end
+  end
 
   get '/signup' do
     if is_logged_in?
@@ -105,6 +119,15 @@ class ApplicationController < Sinatra::Base
       redirect to("/categories/#{@category.id}")
     else
       redirect to('/categories/new')
+    end
+  end
+
+  post '/components' do
+    @component = Component.new(name: params[:name], description: params[:description], category_id: params[:category_id])
+    if @component.save
+      redirect to("/components/#{@component.id}")
+    else
+      redirect to('/components/new')
     end
   end
 
