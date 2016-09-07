@@ -50,7 +50,7 @@ class ApplicationController < Sinatra::Base
   get '/components/:id' do
     if is_logged_in?
       @component = Component.find_by(id: params[:id])
-      @category = Category.find_by(id: @component.category_id)
+      @category = @component.category
       @user = User.find_by(id: @category.user_id)
       erb :'components/show_component'
     else
@@ -81,7 +81,7 @@ class ApplicationController < Sinatra::Base
   get '/components' do
     if is_logged_in?
       @components = Component.all.find_all do |component|
-        Category.find_by(id: component.category_id).user_id == current_user.id 
+        component.category.user_id == current_user.id 
       end
       erb :'components/components'
     else

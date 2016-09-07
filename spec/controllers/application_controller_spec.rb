@@ -600,4 +600,35 @@ describe ApplicationController do
       end
     end
   end
+
+  describe 'show components action' do 
+    let!(:user) { user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password") }
+    let!(:category) { Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id) }
+    let!(:component) { Component.create(:name => "component1", :description => "Component 1 description.", :category_id => category.id) }
+    
+    context 'logged in' do 
+      it 'displays a single component' do
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+        click_button 'submit'
+
+        visit "/components/#{component.id}"
+        expect(page.status_code).to eq(200)
+        expect(page.body).to include("Delete Component")
+        expect(page.body).to include(component.name)
+        expect(page.body).to include(component.description)
+        expect(page.body).to include(component.category.name)
+        expect(page.body).to include("Edit Component")
+      end
+    end
+
+    context 'logged out' do
+      it 'does not let a user view a category' do
+        get "/components/#{component.id}"
+        expect(last_response.location).to include('/login')
+      end
+    end
+  end
 end
