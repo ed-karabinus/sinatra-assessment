@@ -47,6 +47,17 @@ class ApplicationController < Sinatra::Base
     end
   end
 
+  get '/components/:id' do
+    if is_logged_in?
+      @component = Component.find_by(id: params[:id])
+      @category = Category.find_by(id: @component.category_id)
+      @user = User.find_by(id: @category.user_id)
+      erb :'components/show_component'
+    else
+      redirect to('/login')
+    end
+  end
+
   get '/categories/:id/edit' do 
     if is_logged_in?
       @category = Category.find_by(id: params[:id])

@@ -289,16 +289,11 @@ describe ApplicationController do
   end
 
   describe 'show categories action' do 
-    before(:each) do
-      user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
-      category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
-    end
-
+    let!(:user) { user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password") }
+    let!(:category) { Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id) }
+    
     context 'logged in' do 
       it 'displays a single category' do
-        # user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
-        # category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
-
         visit '/login'
 
         fill_in(:username, :with => "user1")
@@ -316,8 +311,6 @@ describe ApplicationController do
 
     context 'logged out' do
       it 'does not let a user view a category' do
-        # user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
-        # category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
         get "/categories/#{category.id}"
         expect(last_response.location).to include('/login')
       end
@@ -525,7 +518,8 @@ describe ApplicationController do
 
   describe 'new component action' do
     context 'logged in' do
-      user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+      let!(:user) { User.create(:username => "user1", :email => "user1@email.com", :password => "user1password") }
+      let!(:category) { Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)}
       
       it 'lets user view new component form if logged in' do
         visit '/login'
@@ -540,23 +534,25 @@ describe ApplicationController do
 
       it 'lets user create a component that is unique to them if they are logged in' do
         user2 = User.create(:username => "user2", :email => "user2@email.com", :password => "user2password")
+        category2 = Category.create(:name => "category2", :description => "Category 2 description.", :user_id => user2.id)
 
         visit '/login'
         fill_in(:username, :with => "user1")
         fill_in(:password, :with => "user1password")
         click_button 'submit'
 
-        get '/components/new'
+        visit '/components/new'
         fill_in(:name, :with => "component1")
         fill_in(:description, :with => "Component 1 description.")
+        choose("#{category.name}")
         click_button 'submit'
 
-        user = User.find_by(:username => "user1")
-        user2 = User.find_by(:username => "user2")
+        category = Category.find_by(:name => "category1")
+        category2 = Category.find_by(:name => "category2")
         component = Component.find_by(:name => "component1")
         expect(component).to be_instance_of(Component)
-        expect(component.user_id).to eq(user.id)
-        expect(component.user_id).not_to eq(user2.id)
+        expect(component.category_id).to eq(category.id)
+        expect(component.category_id).not_to eq(category2.id)
         expect(page.status_code).to eq(200)
       end
 
@@ -591,7 +587,7 @@ describe ApplicationController do
         click_button 'submit'
 
         expect(Component.find_by(:description => "")).to eq(nil)
-        expect(page.current_path).to eq('/categories/new')
+        expect(page.current_path).to eq('/components/new')
       end
     end
 

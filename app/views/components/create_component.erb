@@ -6,7 +6,8 @@
   <p>Your component's category:</p>
   <ul style="list-style: none">
   <% Category.all.each do |category| %>
-    <li><input type="radio" name="category_id" value="<%= "#{category.id}" %>"> <%= "#{category.name}" %></li>
+    <li><label for="<%= "#{category.id}" %>"><%= "#{category.name}" %></label>
+    <input type="radio" name="category_id" id="<%= "#{category.id}" %>" value="<%= "#{category.id}" %>"></li>
   <% end if Category.all %>
   </ul>
   <input type="submit" value="submit">
