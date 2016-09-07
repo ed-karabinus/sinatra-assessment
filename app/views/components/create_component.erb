@@ -4,9 +4,9 @@
   <p>Your component's description:</p>
   <input type="text" name="description">
   <p>Your component's category:</p>
-  <ul>
+  <ul style="list-style: none">
   <% Category.all.each do |category| %>
-    <li><input type="radio" name="category_id" value="<%= "#{category.id}" %>"><%= "#{category.name}" %></li>
+    <li><input type="radio" name="category_id" value="<%= "#{category.id}" %>"> <%= "#{category.name}" %></li>
   <% end if Category.all %>
   </ul>
   <input type="submit" value="submit">

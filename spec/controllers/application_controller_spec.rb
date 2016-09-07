@@ -289,10 +289,15 @@ describe ApplicationController do
   end
 
   describe 'show categories action' do 
+    before(:each) do
+      user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+      category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
+    end
+
     context 'logged in' do 
       it 'displays a single category' do
-        user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
-        category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
+        # user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+        # category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
 
         visit '/login'
 
@@ -311,8 +316,8 @@ describe ApplicationController do
 
     context 'logged out' do
       it 'does not let a user view a category' do
-        user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
-        category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
+        # user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+        # category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
         get "/categories/#{category.id}"
         expect(last_response.location).to include('/login')
       end
@@ -537,12 +542,11 @@ describe ApplicationController do
         user2 = User.create(:username => "user2", :email => "user2@email.com", :password => "user2password")
 
         visit '/login'
-
         fill_in(:username, :with => "user1")
         fill_in(:password, :with => "user1password")
         click_button 'submit'
 
-        visit '/components/new'
+        get '/components/new'
         fill_in(:name, :with => "component1")
         fill_in(:description, :with => "Component 1 description.")
         click_button 'submit'
