@@ -567,6 +567,7 @@ describe ApplicationController do
 
         fill_in(:name, :with => "")
         fill_in(:description, :with => "Component 1 description.")
+        choose("#{category.name}")
         click_button 'submit'
 
         expect(Component.find_by(:name => "")).to eq(nil)
@@ -584,6 +585,7 @@ describe ApplicationController do
 
         fill_in(:name, :with => "component1")
         fill_in(:description, :with => "")
+        choose("#{category.name}")
         click_button 'submit'
 
         expect(Component.find_by(:description => "")).to eq(nil)
