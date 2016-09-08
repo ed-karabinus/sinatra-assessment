@@ -1,14 +1,28 @@
+<div class="jumbotron text-center">
+  <h1>Create component</h1>
+</div>
 <form method="post" action="/components">
-  <p>Your component's name:</p>
-  <input type="text" name="name">
-  <p>Your component's description:</p>
-  <input type="text" name="description">
-  <p>Your component's category:</p>
-  <ul style="list-style: none">
-  <% Category.all.each do |category| %>
-    <li><label for="<%= "#{category.id}" %>"><%= category.name %></label>
-    <input type="radio" name="category_id" id="<%= category.id %>" value="<%= category.id %>"></li>
-  <% end if Category.all %>
-  </ul>
-  <input type="submit" value="submit">
+  <div class="form-group">
+    <label for="name">Component name</label>
+    <input type="text" class="form-control" name="name" placeholder="Component name">
+  </div>
+  <div class="form-group">
+    <label for="description">Component description</label>
+    <input type="text" class="form-control" name="description" placeholder="Component description">
+  </div>
+  <div class="form-group">
+    <legend>Component category</legend>
+    <% @categories.each do |category| %>
+      <div class="form-check">
+        <div class="form-check-label">
+          <label for="<%= "#{category.id}" %>"><%= category.name %></label>
+          <input type="radio" name="category_id" id="<%= category.id %>" value="<%= category.id %>">
+        </div>
+      </div>
+    <% end if @categories %>
+    <% unless @categories %>
+      <small id="noCategory" class="form-text text-muted">You must create a category before creating a component!</small>
+    <% end %>
+  </div>
+  <button type="submit" value="submit" class="btn btn-primary">Submit</button>
 </form>

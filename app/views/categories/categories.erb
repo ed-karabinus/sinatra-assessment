@@ -2,8 +2,10 @@
   ><h1>All categories</h1>
 </div>
 <% @categories.each do |category| %>
+  <hr>
   <h2><a href="/categories/<%= category.id %>"><%= category.name %></a></h2>
   <p><%= category.description %></a></p>
+  <hr>
 <% end if @categories %>
 <%= "<hr>" if @categories.count != 0 %>
 <p><a href="/categories/new">Create a new category!</a></p>

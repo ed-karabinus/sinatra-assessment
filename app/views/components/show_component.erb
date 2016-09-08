@@ -14,7 +14,7 @@
 <p><a href="/components/<%= @component.id %>/edit">Edit Component</a></p>
 <form method="post" action="/components/<%= @component.id %>/delete">
 <input id="hidden" type="hidden" name="_method" value="DELETE">
-<input type="submit" value="Delete Component">
+<button type="submit" value="submit" class="btn btn-primary">Delete Component</button>
 </form>
 <hr>
 <p><a href="/components">Back to all components.</a></p>

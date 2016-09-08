@@ -4,6 +4,9 @@ class ComponentsController < ApplicationController
   get '/components/new' do 
     if is_logged_in?
       @title = "Create component"
+      @categories = Category.all.find_all do |category|
+        category.user_id == current_user.id
+      end
       erb :'components/create_component'
     else
       redirect to('/login')

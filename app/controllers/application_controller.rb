@@ -19,7 +19,7 @@ class ApplicationController < Sinatra::Base
     @categories = Category.all.find_all do |category|
       category.user_id == @user.id 
     end
-    @title = "User Page for #{@user.name}"
+    @title = "User #{@user.username}"
     erb :'categories/categories'
   end
 
