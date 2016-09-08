@@ -736,7 +736,7 @@ describe ApplicationController do
   describe 'delete components action' do
     let!(:user) { User.create(:username => "user1", :email => "user1@email.com", :password => "user1password") }
     let!(:category) { Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id) }
-    let!(:component) { Component.creeate(:name => "component1", :description => "Component 1 description.", :category_id => category.id) }
+    let!(:component) { Component.create(:name => "component1", :description => "Component 1 description.", :category_id => category.id) }
 
     context 'logged in' do
       it 'lets a user delete their own component if they are logged in' do

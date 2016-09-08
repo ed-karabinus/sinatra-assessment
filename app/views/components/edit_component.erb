@@ -8,7 +8,7 @@
   <ul style="list-style: none">
   <% Category.all.each do |category| %>
     <li><label for="<%= "#{category.id}" %>"><%= category.name %></label>
-    <input type="radio" name="category_id" id="<%= category.id %>" value="<%=category.id %>" <%= "checked=\"checked\"" if category.id = @component.category.id %></li>
+    <input type="radio" name="category_id" id="<%= category.id %>" value="<%=category.id %>" <%= "checked=\"checked\"" if category.id == @component.category.id %></li>
   <% end if Category.all %>
   </ul>
   <input type="submit" value="submit">

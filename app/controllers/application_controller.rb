@@ -67,6 +67,16 @@ class ApplicationController < Sinatra::Base
     end
   end
 
+  get '/components/:id/edit' do 
+    if is_logged_in?
+      @component = Component.find_by(id: params[:id])
+      @category = @component.category
+      erb :'components/edit_component'
+    else
+      redirect to('/login')
+    end
+  end
+
   get '/categories' do
     if is_logged_in?
       @categories = Category.all.find_all do |category|
@@ -161,6 +171,15 @@ class ApplicationController < Sinatra::Base
     end
   end
 
+  patch '/components/:id/edit' do
+    @component = Component.find_by(id: params[:id])
+    if @component.update(name: params[:name], description: params[:description], category_id: params[:category_id])
+      redirect to("/components/#{params[:id]}")
+    else
+      redirect to("/components/#{params[:id]}/edit")
+    end
+  end
+
   delete '/categories/:id/delete' do
     @category = Category.find_by(id: params[:id])
     if is_logged_in? && @category.user_id == session[:id]
@@ -168,6 +187,16 @@ class ApplicationController < Sinatra::Base
       redirect to('/categories')
     else
       redirect to("/categories/#{params[:id]}")
+    end
+  end
+
+  delete '/components/:id/delete' do
+    @component = Component.find_by(id: params[:id])
+    if is_logged_in? && @component.category.user_id == session[:id]
+      @component.destroy
+      redirect to('/components')
+    else
+      redirect to("/components/#{params[:id]}")
     end
   end
 

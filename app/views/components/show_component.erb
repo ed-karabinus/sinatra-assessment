@@ -3,7 +3,7 @@
 <p>The description of <%= @component.name %> provided by <%= @user.username %> is:</p>
 <p><%= @component.description %></p>
 <p><%= @component.name %> is in <%= @user.username %>'s category called:</p>
-<p><%= @category.name %>:</p>
+<p><%= @category.name %></p>
 <p><a href="/components/<%= @component.id %>/edit">Edit Component</a></p>
 <form method="post" action="/components/<%= @component.id %>/delete">
 <input id="hidden" type="hidden" name="_method" value="DELETE">
