@@ -3,6 +3,7 @@ require './config/environment'
 class CategoriesController < ApplicationController
   get '/categories/new' do 
     if is_logged_in?
+      @title = "Create category"
       erb :'categories/create_category'
     else
       redirect to('/login')
@@ -13,6 +14,7 @@ class CategoriesController < ApplicationController
     if is_logged_in?
       @category = Category.find_by(id: params[:id])
       @user = User.find_by(id: @category.user_id)
+      @title = "Category page for #{@category.name}"
       erb :'categories/show_category'
     else
       redirect to('/login')
@@ -22,6 +24,7 @@ class CategoriesController < ApplicationController
   get '/categories/:id/edit' do 
     if is_logged_in?
       @category = Category.find_by(id: params[:id])
+      @title = "Edit category page for #{@category.name}"
       erb :'categories/edit_category'
     else
       redirect to('/login')
@@ -33,6 +36,7 @@ class CategoriesController < ApplicationController
       @categories = Category.all.find_all do |category|
         category.user_id == current_user.id
       end
+      @title = "Categories"
       erb :'categories/categories'
     else
       redirect to('/login')

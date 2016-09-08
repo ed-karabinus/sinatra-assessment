@@ -10,6 +10,7 @@ class ApplicationController < Sinatra::Base
   end
 
   get '/' do
+    @title = "GearTracker"
     erb :index
   end
 
@@ -18,6 +19,7 @@ class ApplicationController < Sinatra::Base
     @categories = Category.all.find_all do |category|
       category.user_id == @user.id 
     end
+    @title = "User Page for #{@user.name}"
     erb :'categories/categories'
   end
 
@@ -25,6 +27,7 @@ class ApplicationController < Sinatra::Base
     if is_logged_in?
       redirect to('/categories')
     else
+      @title = "Sign up"
       erb :'users/create_user'
     end
   end
@@ -33,6 +36,7 @@ class ApplicationController < Sinatra::Base
     if is_logged_in?
       redirect to('/categories')
     else
+      @title = "Log in"
       erb :'users/login'
     end
   end
