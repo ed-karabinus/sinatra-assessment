@@ -1,7 +1,14 @@
+<div class="jumbotron text-center">
+  <h1>Create category</h1>
+</div>
 <form method="post" action="/categories">
-  <p>Your category's name:</p>
-  <input type="text" name="name">
-  <p>Your category's description:</p>
-  <input type="text" name="description">
-  <input type="submit" value="submit">
+  <div class="form-group">
+    <label for="name">Category name</label>
+    <input type="text" class="form-control" id="name" placeholder="Category name" name="name">
+  </div>
+  <div class="form-group">
+    <label for="description">Category description</label>
+    <input type="text" class="form-control" id="description" placeholder="Category description" name="description">
+  </div>
+  <button type="submit" value="submit" class="btn btn-primary">Submit</button>
 </form>

@@ -16,11 +16,10 @@ class ApplicationController < Sinatra::Base
 
   get '/users/:slug' do 
     @user = User.find_by_slug(params[:slug])
-    @categories = Category.all.find_all do |category|
-      category.user_id == @user.id 
-    end
+    @categories = @user.categories
+    @components = @user.components
     @title = "User #{@user.username}"
-    erb :'categories/categories'
+    erb :'users/show_user'
   end
 
   get '/signup' do

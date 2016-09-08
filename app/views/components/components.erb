@@ -7,5 +7,6 @@
   <p><%= component.description %></p>
   <hr>
 <% end if @components %>
+<%= "<hr>" if @components.count == 0 %>
 <p><a href="/components/new">Create a new component!</a></p>
 <p><a href="/logout">Log out</a></p>

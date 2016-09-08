@@ -7,6 +7,6 @@
   <p><%= category.description %></a></p>
   <hr>
 <% end if @categories %>
-<%= "<hr>" if @categories.count != 0 %>
+<%= "<hr>" if @categories.count == 0 %>
 <p><a href="/categories/new">Create a new category!</a></p>
 <p><a href="/logout">Log out</a></p>

@@ -25,6 +25,9 @@ class ComponentsController < ApplicationController
   get '/components/:id/edit' do 
     if is_logged_in? && (@component = Component.find_by(id: params[:id]))
       @title = "Edit #{@component.name}"
+      @categories = Category.all.find_all do |category|
+        category.user_id == current_user.id
+      end
       erb :'components/edit_component'
     else
       redirect to('/login')

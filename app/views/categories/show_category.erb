@@ -1,10 +1,15 @@
-<p><%= @category.user.username %>'s category is called:</p>
-<p><%= @category.name %></p>
-<p>The description of <%= @category.name %> provided by <%= @category.user.username %> is:</p>
+<div class="jumbotron text-center">
+  <h1><%= @category.name %></h1>
+  <h2>Category</h2>
+</div>
+<h3>User</h3>
+<p><%= @category.user.username %></p>
+<h3>Description</h3>
 <p><%= @category.description %></p>
 <p><a href="/categories/<%= @category.id %>/edit">Edit Category</a></p>
 <form method="post" action="/categories/<%= @category.id %>/delete">
 <input id="hidden" type="hidden" name="_method" value="DELETE">
-<input type="submit" value="Delete Category">
+<button type="submit" value="submit" class="btn btn-primary">Delete Category</button>
 </form>
+<hr>
 <p><a href="/categories">Back to all categories.</a></p>
