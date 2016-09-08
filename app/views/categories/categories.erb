@@ -1,7 +1,10 @@
-<h1>Welcome, <%= current_user.username %>.</h1>
+<div class="jumbotron text-center"
+  ><h1>All categories</h1>
+</div>
 <% @categories.each do |category| %>
-  <h2><a href="/categories/<%= category.id %>"><%= category.name %></h2>
+  <h2><a href="/categories/<%= category.id %>"><%= category.name %></a></h2>
   <p><%= category.description %></a></p>
 <% end if @categories %>
+<%= "<hr>" if @categories.count != 0 %>
 <p><a href="/categories/new">Create a new category!</a></p>
 <p><a href="/logout">Log out</a></p>
