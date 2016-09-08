@@ -12,7 +12,7 @@ class ComponentsController < ApplicationController
 
   get '/components/:id' do
     if is_logged_in? && (@component = Component.find_by(id: params[:id]))
-      @title = "Component – #{@component.name}"
+      @title = "#{@component.name}"
       erb :'components/show_component'
     else
       redirect to('/login')
@@ -21,7 +21,7 @@ class ComponentsController < ApplicationController
 
   get '/components/:id/edit' do 
     if is_logged_in? && (@component = Component.find_by(id: params[:id]))
-      @title = "Edit component – #{@component.name}"
+      @title = "Edit #{@component.name}"
       erb :'components/edit_component'
     else
       redirect to('/login')

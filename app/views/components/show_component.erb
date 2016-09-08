@@ -1,5 +1,6 @@
 <div class="jumbotron text-center">
-  Component: <%= @component.name %>
+  <h1><%= @component.name %></h1>
+  <h2>Component</h2>
 </div>
 <h3>User</h3>
 <p><%= @component.category.user.username %></p>
@@ -15,4 +16,5 @@
 <input id="hidden" type="hidden" name="_method" value="DELETE">
 <input type="submit" value="Delete Component">
 </form>
+<hr>
 <p><a href="/components">Back to all components.</a></p>
