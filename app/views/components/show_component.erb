@@ -1,9 +1,15 @@
-<p><%= @user.username %>'s component is called:</p>
-<p><%= @component.name %></p>
-<p>The description of <%= @component.name %> provided by <%= @user.username %> is:</p>
+<div class="jumbotron text-center">
+  Component: <%= @component.name %>
+</div>
+<h3>User</h3>
+<p><%= @component.category.user.username %></p>
+<hr>
+<h3>Category</h3>
+<p><%= @component.category.name %></p>
+<hr>
+<h3>Description</h3>
 <p><%= @component.description %></p>
-<p><%= @component.name %> is in <%= @user.username %>'s category called:</p>
-<p><%= @category.name %></p>
+<hr>
 <p><a href="/components/<%= @component.id %>/edit">Edit Component</a></p>
 <form method="post" action="/components/<%= @component.id %>/delete">
 <input id="hidden" type="hidden" name="_method" value="DELETE">

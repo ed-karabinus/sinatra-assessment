@@ -1,6 +1,6 @@
-<p><%= @user.username %>'s category is called:</p>
+<p><%= @category.user.username %>'s category is called:</p>
 <p><%= @category.name %></p>
-<p>The description of <%= @category.name %> provided by <%= @user.username %> is:</p>
+<p>The description of <%= @category.name %> provided by <%= @category.user.username %> is:</p>
 <p><%= @category.description %></p>
 <p><a href="/categories/<%= @category.id %>/edit">Edit Category</a></p>
 <form method="post" action="/categories/<%= @category.id %>/delete">

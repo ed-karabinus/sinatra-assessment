@@ -11,10 +11,8 @@ class CategoriesController < ApplicationController
   end
 
   get '/categories/:id' do
-    if is_logged_in?
-      @category = Category.find_by(id: params[:id])
-      @user = User.find_by(id: @category.user_id)
-      @title = "Category page for #{@category.name}"
+    if is_logged_in? && (@category = Category.find_by(id: params[:id]))
+      @title = "Category – #{@category.name}"
       erb :'categories/show_category'
     else
       redirect to('/login')
@@ -22,9 +20,9 @@ class CategoriesController < ApplicationController
   end
 
   get '/categories/:id/edit' do 
-    if is_logged_in?
+    if is_logged_in? && (@category = Category.find_by(id: params[:id]))
       @category = Category.find_by(id: params[:id])
-      @title = "Edit category page for #{@category.name}"
+      @title = "Edit category – #{@category.name}"
       erb :'categories/edit_category'
     else
       redirect to('/login')
@@ -36,7 +34,7 @@ class CategoriesController < ApplicationController
       @categories = Category.all.find_all do |category|
         category.user_id == current_user.id
       end
-      @title = "Categories"
+      @title = "All categories"
       erb :'categories/categories'
     else
       redirect to('/login')

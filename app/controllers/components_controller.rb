@@ -11,11 +11,8 @@ class ComponentsController < ApplicationController
   end
 
   get '/components/:id' do
-    if is_logged_in?
-      @component = Component.find_by(id: params[:id])
-      @category = @component.category
-      @user = User.find_by(id: @category.user_id)
-      @title = "Component page for #{@component.name}"
+    if is_logged_in? && (@component = Component.find_by(id: params[:id]))
+      @title = "Component – #{@component.name}"
       erb :'components/show_component'
     else
       redirect to('/login')
@@ -23,10 +20,8 @@ class ComponentsController < ApplicationController
   end
 
   get '/components/:id/edit' do 
-    if is_logged_in?
-      @component = Component.find_by(id: params[:id])
-      @category = @component.category
-      @title = "Edit component page for #{@component.name}"
+    if is_logged_in? && (@component = Component.find_by(id: params[:id]))
+      @title = "Edit component – #{@component.name}"
       erb :'components/edit_component'
     else
       redirect to('/login')
@@ -38,7 +33,7 @@ class ComponentsController < ApplicationController
       @components = Component.all.find_all do |component|
         component.category.user_id == current_user.id 
       end
-      @title = "Components"
+      @title = "All components"
       erb :'components/components'
     else
       redirect to('/login')

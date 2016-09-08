@@ -1,4 +1,6 @@
-<h1>Welcome, <%= current_user.username %>.</h1>
+<div class="jumbotron text-center">
+  <h1>All components</h1>
+</div>
 <% @components.each do |component| %>
   <h2><a href="/components/<%= component.id %>"><%= component.name %></h2>
   <p><%= component.description %></a></p>
