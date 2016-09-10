@@ -190,7 +190,10 @@ describe CategoriesController do
         session = {}
         session[:user_id] = user1.id
         visit "/categories/#{category2.id}/edit"
-        expect(page.current_path).to include('/categories')
+        fill_in(:name, :with => "modified_category2")
+        click_button 'submit'
+
+        expect(Category.find_by(:name => "modified_category2")).to be(nil)
       end
 
       it 'lets a user edit their own category if they are logged in' do 

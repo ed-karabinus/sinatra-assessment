@@ -61,7 +61,7 @@ class ComponentsController < ApplicationController
 
   patch '/components/:id/edit' do
     @component = Component.find_by(id: params[:id])
-    if is_logged_in? && @component.cateegory.user_id == session[:id] && @component.update(name: params[:name], description: params[:description], category_id: params[:category_id])
+    if is_logged_in? && @component.category.user_id == session[:id] && @component.update(name: params[:name], description: params[:description], category_id: params[:category_id])
       redirect to("/components/#{params[:id]}")
     else
       redirect to("/components/#{params[:id]}/edit")

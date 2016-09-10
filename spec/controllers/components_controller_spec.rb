@@ -108,6 +108,35 @@ describe ComponentsController do
         expect(Component.find_by(:description => "")).to eq(nil)
         expect(page.current_path).to eq('/components/new')
       end
+
+      it 'does not let a user create a component without a category' do
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+        click_button 'submit'
+
+        visit '/components/new'
+
+        fill_in(:name, :with => "component1")
+        fill_in(:description, :with => "Component 1 description.")
+        click_button 'submit'
+
+        expect(Component.find_by(:description => "")).to eq(nil)
+        expect(page.current_path).to eq('/components/new')
+      end
+
+      it "lists a user\'s categories in the component creation form" do
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+        click_button 'submit'
+
+        visit '/components/new'
+        expect(page.status_code).to eq(200)
+        expect(page.body).to include("category1")
+      end
     end
 
     context 'logged out' do
@@ -190,7 +219,11 @@ describe ComponentsController do
         session = {}
         session[:user_id] = user.id
         visit "/components/#{component2.id}/edit"
-        expect(page.current_path).to include('/components')
+
+        fill_in(:name, :with => "modified_component2")
+        click_button 'submit'
+
+        expect(Component.find_by(:name => "modified_component2")).to be(nil)
       end
 
       it 'lets a user edit their own component if they are logged in' do 
@@ -200,7 +233,6 @@ describe ComponentsController do
         fill_in(:password, :with => "user1password")
         click_button 'submit'
         visit "/components/#{component.id}/edit"
-        binding.pry
 
         fill_in(:name, :with => "modified_component1")
         fill_in(:description, :with => "Modified Component 1 description.")
