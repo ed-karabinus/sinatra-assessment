@@ -91,7 +91,7 @@ describe ApplicationController do
 
       follow_redirect!
       expect(last_response.status).to eq(200)
-      expect(last_response.body).to include("All categories")
+      expect(last_response.body).to include("Your categories")
     end
 
     it 'does not let the user view login page if already logged in' do

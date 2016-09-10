@@ -11,7 +11,11 @@ class ApplicationController < Sinatra::Base
 
   get '/' do
     @title = "GearTracker"
-    erb :index
+    if is_logged_in?
+      erb :"users/#{current_user.slug}"
+    else
+      erb :index
+    end
   end
 
   get '/users/:slug' do 
