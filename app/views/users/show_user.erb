@@ -17,7 +17,7 @@
 <% end if @components %>
 <%= "<hr>" if @components.count == 0 %>
 <p><a href="/users/<%= @user.id %>/edit">Edit user info</a></p>
-<form method="post" action="/users/<%= @user.id %>/delete">
+<form method="post" action="/users/<%= @user.slug %>/delete">
 <input id="hidden" type="hidden" name="_method" value="DELETE">
 <button type="submit" value="submit" class="btn btn-primary">Delete Account</button>
 </form>

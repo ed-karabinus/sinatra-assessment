@@ -14,21 +14,27 @@ class ComponentsController < ApplicationController
   end
 
   get '/components/:id' do
-    if is_logged_in? && (@component = Component.find_by(id: params[:id]))
+    @component = Component.find_by(id: params[:id])
+    if is_logged_in? && @component && @component.category.user_id == session[:id]
       @title = "#{@component.name}"
       erb :'components/show_component'
+    elsif is_logged_in?
+      redirect to('/components')
     else
       redirect to('/login')
     end
   end
 
   get '/components/:id/edit' do 
-    if is_logged_in? && (@component = Component.find_by(id: params[:id]))
+    @component = Component.find_by(id: params[:id])
+    if is_logged_in? && @component && @component.category.user_id == session[:id]
       @title = "Edit #{@component.name}"
       @categories = Category.all.find_all do |category|
         category.user_id == current_user.id
       end
       erb :'components/edit_component'
+    elsif is_logged_in?
+      redirect to('/components/:id')
     else
       redirect to('/login')
     end
@@ -39,7 +45,7 @@ class ComponentsController < ApplicationController
       @components = Component.all.find_all do |component|
         component.category.user_id == current_user.id 
       end
-      @title = "All components"
+      @title = "Your components"
       erb :'components/components'
     else
       redirect to('/login')
@@ -48,7 +54,7 @@ class ComponentsController < ApplicationController
 
   post '/components' do
     @component = Component.new(name: params[:name], description: params[:description], category_id: params[:category_id])
-    if @component.save
+    if is_logged_in? && @component && @component.category.user_id == session[:id] && @component.save
       redirect to("/components/#{@component.id}")
     else
       redirect to('/components/new')
@@ -57,7 +63,7 @@ class ComponentsController < ApplicationController
 
   patch '/components/:id/edit' do
     @component = Component.find_by(id: params[:id])
-    if @component.update(name: params[:name], description: params[:description], category_id: params[:category_id])
+    if is_logged_in? && @component.cateegory.user_id == session[:id] && @component.update(name: params[:name], description: params[:description], category_id: params[:category_id])
       redirect to("/components/#{params[:id]}")
     else
       redirect to("/components/#{params[:id]}/edit")

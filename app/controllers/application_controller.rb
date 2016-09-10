@@ -16,10 +16,23 @@ class ApplicationController < Sinatra::Base
 
   get '/users/:slug' do 
     @user = User.find_by_slug(params[:slug])
-    @categories = @user.categories
-    @components = @user.components
-    @title = "User #{@user.username}"
-    erb :'users/show_user'
+    if is_logged_in? && @user == current_user
+      @categories = @user.categories
+      @components = @user.components
+      @title = "User #{@user.username}"
+      erb :'users/show_user'
+    else
+      redirect to('/categories')
+    end
+  end
+
+  get '/users/:slug/edit' do
+    @user = user.find_by_slug(params[:slug])
+    if is_logged_in? && @user == current_user
+      erb :'users/edit_user'
+    else
+      redirect to('/categories')
+    end
   end
 
   get '/signup' do
@@ -67,6 +80,10 @@ class ApplicationController < Sinatra::Base
     else
       redirect to('/signup')
     end
+  end
+
+  patch '/users/:slug/edit' do
+    
   end
 
   helpers do
