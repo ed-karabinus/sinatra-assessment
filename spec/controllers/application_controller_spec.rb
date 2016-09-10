@@ -36,6 +36,17 @@ describe ApplicationController do
       expect(last_response.location).to include('/signup')
     end
 
+    it 'displays an error when a user attempts to sign up without a username' do
+      params = {
+        :username => "",
+        :email => "user1@email.com",
+        :password => "user1password"
+      }
+      post '/signup', params
+      follow_redirect!
+      expect(last_response.body).to include("Username can't be blank. Please try again.")
+    end
+
     it 'does not let a user sign up without an email' do
       params = {
         :username => "user1",
@@ -46,6 +57,17 @@ describe ApplicationController do
       expect(last_response.location).to include('/signup')
     end
 
+    it 'displays an error when a user attempts to sign up without an email' do
+      params = {
+        :username => "user1",
+        :email => "",
+        :password => "user1password"
+      }
+      post '/signup', params
+      follow_redirect!
+      expect(last_response.body).to include("Email can't be blank. Please try again.")
+    end
+
     it 'does not let a user sign up without a password' do 
       params = {
         :username => "user1",
@@ -54,6 +76,17 @@ describe ApplicationController do
       }
       post '/signup', params
       expect(last_response.location).to include('/signup')
+    end
+
+    it 'displays an error when a user attempts to sign up without a password' do
+      params = {
+        :username => "user1",
+        :email => "user1@email.com",
+        :password => ""
+      }
+      post '/signup', params
+      follow_redirect!
+      expect(last_response.body).to include("Password can't be blank. Please try again.")
     end
 
     it 'does not let a logged in user view the signup page' do 
@@ -102,10 +135,47 @@ describe ApplicationController do
       user = User.create(params.merge(:email => "user1@email.com"))
 
       post '/login', params
-      session = { :id => "user.id" }
+      # session = { :id => "user.id" }
 
       get '/login'
       expect(last_response.location).to include("/categories")
+    end
+
+    it 'does not let a user log in without the correct credentials' do
+      params = {
+        :username => "user1",
+        :password => "user1password",
+        :email => "user1@email.com"
+      }
+
+      incorrect_params = {
+        :username => "",
+        :password => ""
+      }
+
+      user = User.create(params)
+
+      post '/login', incorrect_params
+      expect(last_response.location).to include("/login")
+    end
+
+    it 'displays an error when a user attempts to log in without the correct credentials' do
+      params = {
+        :username => "user1",
+        :password => "user1password",
+        :email => "user1@email.com"
+      }
+
+      incorrect_params = {
+        :username => "",
+        :password => ""
+      }
+
+      user = User.create(params)
+
+      post '/login', incorrect_params
+      follow_redirect!
+      expect(last_response.body).to include("Invalid credentials. Please try again.")
     end
   end
 
