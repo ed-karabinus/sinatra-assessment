@@ -12,7 +12,7 @@ class ApplicationController < Sinatra::Base
   get '/' do
     @title = "GearTracker"
     if is_logged_in?
-      erb :"users/#{current_user.slug}"
+      redirect to("/users/#{current_user.slug}")
     else
       erb :index
     end
@@ -71,6 +71,7 @@ class ApplicationController < Sinatra::Base
       session[:id] = @user.id
       redirect to('/categories')
     else
+      flash[:error] = "Invalid credentials. Please try again."
       redirect to('/login')
     end
   end
@@ -81,6 +82,8 @@ class ApplicationController < Sinatra::Base
       session[:id] = @user.id
       redirect to('/categories')
     else
+      binding.pry
+      flash[:error] = @user.errors.messages
       redirect to('/signup')
     end
   end

@@ -5,14 +5,17 @@
 <h3>Categories</h3>
 <% @categories.each do |category| %>
   <hr>
-  <h4><%= category.name %></h4>
+  <h4><a href="<%= "/categories/#{category.id}" %>"><%= category.name %></a></h4>
   <p><%= category.description %></p>
   <hr>
 <% end if @categories %>
 <%= "<hr>" if @categories.count == 0 %>
 <h3>Components</h3>
 <% @components.each do |component| %>
-  <h4><%= component.name %></h4>
+  <hr>
+  <h4><a href="<%= "/components/#{component.id}" %>"><%= component.name %></a></h4>
   <p><%= component.description %></p>
+  <hr>
 <% end if @components %>
 <%= "<hr>" if @components.count == 0 %>
+<p><a href="/logout">Log out</a></p>
