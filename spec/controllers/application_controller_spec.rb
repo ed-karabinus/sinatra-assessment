@@ -112,6 +112,19 @@ describe ApplicationController do
       expect(last_response.body).to include('Username has already been taken. Please try again.')
     end
 
+    it 'populates only the email field on the sign up form after validation failure when a user attempts to sign up with a duplicate username' do
+      params = {
+        :username => "user1",
+        :password => "user1password",
+        :email => "user1@email.com"
+      }
+      User.create(params)
+      post '/signup', params
+      follow_redirect!
+      expect(last_response.body).to include("value=\"user1@email.com\"")
+      expect(last_response.body).not_to include("value=\"user1\"")
+    end
+
     it 'does not let a logged in user view the signup page' do 
       params = {
         :username => "user",

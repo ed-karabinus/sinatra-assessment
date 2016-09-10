@@ -9,12 +9,12 @@
 <form method="post" action="/signup">
   <div class="form-group">
     <label for="username">Username</label>
-    <input type="text" class="form-control" name="username" id="username" placeholder="Username">
+    <input type="text" class="form-control" name="username" id="username" <%= "value=\"#{flash[:username]}\"" if flash[:username] %> placeholder="Username">
     <small id="usernameHelp" class="form-text text-muted">Your username must be unique.</small>
   </div>
   <div class="form-group">
     <label for="email">Email</label>
-    <input type="email" class="form-control" name="email" id="email" placeholder="Email">
+    <input type="email" class="form-control" name="email" id="email" <%= "value=\"#{flash[:email]}\"" if flash[:email] %> placeholder="Email">
   </div>
   <div class="form-group">
     <label for="password">Password</label>
