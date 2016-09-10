@@ -3,7 +3,7 @@
   <h2>User</h2>
 </div>
 <h3>Categories</h3>
-<% @categories.all do |category| %>
+<% @categories.each do |category| %>
   <hr>
   <h4><%= category.name %></h4>
   <p><%= category.description %></p>
@@ -11,13 +11,8 @@
 <% end if @categories %>
 <%= "<hr>" if @categories.count == 0 %>
 <h3>Components</h3>
-<% @components.all do |component| %>
+<% @components.each do |component| %>
   <h4><%= component.name %></h4>
-  <p> component.description </p>
+  <p><%= component.description %></p>
 <% end if @components %>
 <%= "<hr>" if @components.count == 0 %>
-<p><a href="/users/<%= @user.id %>/edit">Edit user info</a></p>
-<form method="post" action="/users/<%= @user.slug %>/delete">
-<input id="hidden" type="hidden" name="_method" value="DELETE">
-<button type="submit" value="submit" class="btn btn-primary">Delete Account</button>
-</form>

@@ -14,8 +14,7 @@ class ComponentsController < ApplicationController
   end
 
   get '/components/:id' do
-    @component = Component.find_by(id: params[:id])
-    if is_logged_in? && @component && @component.category.user_id == session[:id]
+    if is_logged_in? && @component = Component.find_by(id: params[:id])
       @title = "#{@component.name}"
       erb :'components/show_component'
     elsif is_logged_in?
@@ -26,8 +25,7 @@ class ComponentsController < ApplicationController
   end
 
   get '/components/:id/edit' do 
-    @component = Component.find_by(id: params[:id])
-    if is_logged_in? && @component && @component.category.user_id == session[:id]
+    if is_logged_in? && @component = Component.find_by(id: params[:id])
       @title = "Edit #{@component.name}"
       @categories = Category.all.find_all do |category|
         category.user_id == current_user.id
@@ -54,7 +52,7 @@ class ComponentsController < ApplicationController
 
   post '/components' do
     @component = Component.new(name: params[:name], description: params[:description], category_id: params[:category_id])
-    if is_logged_in? && @component && @component.category.user_id == session[:id] && @component.save
+    if is_logged_in? && @component.save
       redirect to("/components/#{@component.id}")
     else
       redirect to('/components/new')

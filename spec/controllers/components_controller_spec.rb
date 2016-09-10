@@ -174,7 +174,6 @@ describe ComponentsController do
         fill_in(:password, :with => "user1password")
         click_button 'submit'
         visit "/components/#{component.id}/edit"
-
         expect(find("#hidden", :visible => :false).value).to eq("PATCH")
       end
 
@@ -201,10 +200,12 @@ describe ComponentsController do
         fill_in(:password, :with => "user1password")
         click_button 'submit'
         visit "/components/#{component.id}/edit"
+        binding.pry
 
         fill_in(:name, :with => "modified_component1")
         fill_in(:description, :with => "Modified Component 1 description.")
         click_button 'submit'
+
         expect(Component.find_by(:name => "component1")).to eq(nil)
         component = Component.find_by(:name => "modified_component1")
         expect(component).to be_instance_of(Component)

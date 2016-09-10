@@ -147,9 +147,9 @@ describe ApplicationController do
   end
 
   describe 'user show page' do 
-    user1 = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
-    category1 = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user1.id)
-    category2 = Category.create(:name => "category2", :description => "Category 2 description.", :user_id => user1.id)
+    let!(:user1) { User.create(:username => "user1", :email => "user1@email.com", :password => "user1password") }
+    let!(:category1) { Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user1.id) }
+    let!(:category2) { Category.create(:name => "category2", :description => "Category 2 description.", :user_id => user1.id) }
 
     it "shows all of a user's categories" do
       get "/users/#{user1.slug}"
