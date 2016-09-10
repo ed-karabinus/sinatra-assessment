@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   validates_presence_of :username, on: :create
   validates_presence_of :password, on: :create
   validates_presence_of :email, on: :create
+  validates_uniqueness_of :username, on: :create
 
   def slug
     self.username.downcase.gsub(/[\$\&\+\s]/, {'$' => 's', '&' => 'and', '+' => 'plus', ' ' => '-'}).gsub(/[\'\.\(\)\,]/, '')

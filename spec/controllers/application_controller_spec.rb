@@ -58,14 +58,13 @@ describe ApplicationController do
 
     it 'does not let a logged in user view the signup page' do 
       params = {
-        :username => "user1",
+        :username => "user",
         :email => "user1@email.com",
         :password => "user1password"
       }
       user = User.create(params)
-      post '/signup', params
-      session = {}
-      session[:id] = user.id 
+      post '/login', params
+
       get '/signup'
       expect(last_response.location).to include('/categories')
     end

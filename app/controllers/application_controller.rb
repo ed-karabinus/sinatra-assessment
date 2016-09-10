@@ -7,6 +7,7 @@ class ApplicationController < Sinatra::Base
     set :views, 'app/views'
     enable :sessions
     set :session_secret, 'jamal'
+    register Sinatra::Flash
   end
 
   get '/' do
@@ -82,8 +83,13 @@ class ApplicationController < Sinatra::Base
       session[:id] = @user.id
       redirect to('/categories')
     else
-      binding.pry
-      flash[:error] = @user.errors.messages
+      errorArray = []
+      @user.errors.messages.each do |key, value|
+        value.each do |warning|
+          errorArray << "#{key.capitalize} #{warning}. Please try again."
+        end
+      end
+      flash[:error] = errorArray
       redirect to('/signup')
     end
   end
