@@ -90,7 +90,10 @@ class ApplicationController < Sinatra::Base
         end
       end
       flash[:error] = errorArray
-      if !@user.errors.messages[:username].empty? && @user.errors.messages[:email].empty?
+      if @user.errors.messages[:username].empty? && @user.errors.messages[:email].empty?
+        flash[:email] = params[:email]
+        flash[:username] = params[:username]
+      elsif !@user.errors.messages[:username].empty? && @user.errors.messages[:email].empty?
         flash[:email] = params[:email]
       elsif !@user.errors.messages[:email].empty? && @user.errors.messages[:username].empty?
         flash[:username] = params[:username]

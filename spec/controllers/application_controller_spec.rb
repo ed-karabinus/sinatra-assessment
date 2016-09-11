@@ -26,103 +26,147 @@ describe ApplicationController do
       expect(last_response.location).to include('/categories')
     end
 
-    it 'does not let a user sign up without a username' do
-      params = {
-        :username => "",
-        :email => "user1@email.com",
-        :password => "user1password"
-      }
-      post '/signup', params
-      expect(last_response.location).to include('/signup')
+    context 'without a username' do
+      it 'does not let a user sign up' do
+        params = {
+          :username => "",
+          :email => "user1@email.com",
+          :password => "user1password"
+        }
+        post '/signup', params
+        expect(last_response.location).to include('/signup')
+      end
+
+      it 'displays an error when a user attempts to sign up' do
+        params = {
+          :username => "",
+          :email => "user1@email.com",
+          :password => "user1password"
+        }
+        post '/signup', params
+        follow_redirect!
+        expect(last_response.body).to include("Username can't be blank. Please try again.")
+      end
+
+      it 'populates only the email field on the sign up form after validation failure when a user attempts to sign up' do
+        params = {
+          :username => "",
+          :email => "user1@email.com",
+          :password => "user1password"
+        }
+        post '/signup', params
+        follow_redirect!
+        expect(last_response.body).to include("value=\"user1@email.com\"")
+        expect(last_response.body).not_to include("value=\"user1\"")
+      end
     end
 
-    it 'displays an error when a user attempts to sign up without a username' do
-      params = {
-        :username => "",
-        :email => "user1@email.com",
-        :password => "user1password"
-      }
-      post '/signup', params
-      follow_redirect!
-      expect(last_response.body).to include("Username can't be blank. Please try again.")
+    context 'without an email' do
+      it 'does not let a user sign up' do
+        params = {
+          :username => "user1",
+          :email => "", 
+          :password => "user1password"
+        }
+        post '/signup', params
+        expect(last_response.location).to include('/signup')
+      end
+
+      it 'displays an error when a user attempts to sign up' do
+        params = {
+          :username => "user1",
+          :email => "",
+          :password => "user1password"
+        }
+        post '/signup', params
+        follow_redirect!
+        expect(last_response.body).to include("Email can't be blank. Please try again.")
+      end
+
+      it 'populates only the username field on the sign up form after validation failure when a user attempts to sign up' do
+        params = {
+          :username => "user1",
+          :email => "",
+          :password => "user1password"
+        }
+        post '/signup', params
+        follow_redirect!
+        expect(last_response.body).not_to include("value=\"user1@email.com\"")
+        expect(last_response.body).to include("value=\"user1\"")
+      end
     end
 
-    it 'does not let a user sign up without an email' do
-      params = {
-        :username => "user1",
-        :email => "", 
-        :password => "user1password"
-      }
-      post '/signup', params
-      expect(last_response.location).to include('/signup')
+    context 'without a password' do
+      it 'does not let a user sign up' do 
+        params = {
+          :username => "user1",
+          :email => "user1@email.com",
+          :password => ""
+        }
+        post '/signup', params
+        expect(last_response.location).to include('/signup')
+      end
+
+      it 'displays an error when a user attempts to sign up' do
+        params = {
+          :username => "user1",
+          :email => "user1@email.com",
+          :password => ""
+        }
+        post '/signup', params
+        follow_redirect!
+        expect(last_response.body).to include("Password can't be blank. Please try again.")
+      end
+
+      it 'populates the username and email fields on the sign up form after validation failure when a user attempts to sign up' do
+        params = {
+          :username => "user1",
+          :email => "user1@email.com",
+          :password => ""
+        }
+        post '/signup', params
+        follow_redirect!
+        expect(last_response.body).to include("value=\"user1@email.com\"")
+        expect(last_response.body).to include("value=\"user1\"")
+      end
     end
 
-    it 'displays an error when a user attempts to sign up without an email' do
-      params = {
-        :username => "user1",
-        :email => "",
-        :password => "user1password"
-      }
-      post '/signup', params
-      follow_redirect!
-      expect(last_response.body).to include("Email can't be blank. Please try again.")
-    end
+    context 'with a duplicate username' do
+      it 'does not let a user sign up' do
+        params = {
+          :username => "user1",
+          :password => "user1password",
+          :email => "user1@email.com"
+        }
+        User.create(params)
+        post '/signup', params
+        expect(last_response.location).to include('/signup')
+      end
 
-    it 'does not let a user sign up without a password' do 
-      params = {
-        :username => "user1",
-        :email => "user1@email.com",
-        :password => ""
-      }
-      post '/signup', params
-      expect(last_response.location).to include('/signup')
-    end
+      it 'displays an error when a user attempts to sign up' do
+        params = {
+          :username => "user1",
+          :password => "user1password",
+          :email => "user1@email.com"
+        }
+        User.create(params)
+        post '/signup', params
+        follow_redirect!
+        expect(last_response.body).to include('Username has already been taken. Please try again.')
+      end
 
-    it 'displays an error when a user attempts to sign up without a password' do
-      params = {
-        :username => "user1",
-        :email => "user1@email.com",
-        :password => ""
-      }
-      post '/signup', params
-      follow_redirect!
-      expect(last_response.body).to include("Password can't be blank. Please try again.")
-    end
-
-    it 'does not let a user sign up with a duplicate username' do
-      params = {
-        :username => "user1",
-        :password => "user1password",
-        :email => "user1@email.com"
-      }
-      User.create(params)
-      post '/signup', params
-      expect(last_response.location).to include('/signup')
-    end
-
-    it 'displays an error when a user attempts to sign up with a duplicate username' do
-      params = {
-        :username => "user1",
-        :password => "user1password",
-        :email => "user1@email.com"
-      }
-      User.create(params)
-      post '/signup', params
-      follow_redirect!
-      expect(last_response.body).to include('Username has already been taken. Please try again.')
-    end
-
-    it 'populates only the email field on the sign up form after validation failure when a user attempts to sign up with a duplicate username' do
-      params = {
-        :username => "user1",
-        :password => "user1password",
-        :email => "user1@email.com"
-      }
-      User.create(params)
-      post '/signup', params
-      follow_redirect!
-      expect(last_response.body).to include("value=\"user1@email.com\"")
-      expect(last_response.body).not_to include("value=\"user1\"")
+      it 'populates only the email field on the sign up form after validation failure when a user attempts to sign up' do
+        params = {
+          :username => "user1",
+          :password => "user1password",
+          :email => "user1@email.com"
+        }
+        User.create(params)
+        post '/signup', params
+        follow_redirect!
+        expect(last_response.body).to include("value=\"user1@email.com\"")
+        expect(last_response.body).not_to include("value=\"user1\"")
+      end
     end
 
     it 'does not let a logged in user view the signup page' do 
