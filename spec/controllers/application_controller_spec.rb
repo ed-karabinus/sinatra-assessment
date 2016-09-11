@@ -27,33 +27,24 @@ describe ApplicationController do
     end
 
     context 'without a username' do
-      it 'does not let a user sign up' do
-        params = {
+      let!(:params) { {
           :username => "",
           :email => "user1@email.com",
           :password => "user1password"
-        }
+        } }
+
+      it 'does not let a user sign up' do
         post '/signup', params
         expect(last_response.location).to include('/signup')
       end
 
       it 'displays an error when a user attempts to sign up' do
-        params = {
-          :username => "",
-          :email => "user1@email.com",
-          :password => "user1password"
-        }
         post '/signup', params
         follow_redirect!
         expect(last_response.body).to include("Username can't be blank. Please try again.")
       end
 
       it 'populates only the email field on the sign up form after validation failure when a user attempts to sign up' do
-        params = {
-          :username => "",
-          :email => "user1@email.com",
-          :password => "user1password"
-        }
         post '/signup', params
         follow_redirect!
         expect(last_response.body).to include("value=\"user1@email.com\"")
@@ -62,33 +53,24 @@ describe ApplicationController do
     end
 
     context 'without an email' do
-      it 'does not let a user sign up' do
-        params = {
+      let!(:params) { {
           :username => "user1",
           :email => "", 
           :password => "user1password"
-        }
+        } }
+
+      it 'does not let a user sign up' do
         post '/signup', params
         expect(last_response.location).to include('/signup')
       end
 
       it 'displays an error when a user attempts to sign up' do
-        params = {
-          :username => "user1",
-          :email => "",
-          :password => "user1password"
-        }
         post '/signup', params
         follow_redirect!
         expect(last_response.body).to include("Email can't be blank. Please try again.")
       end
 
       it 'populates only the username field on the sign up form after validation failure when a user attempts to sign up' do
-        params = {
-          :username => "user1",
-          :email => "",
-          :password => "user1password"
-        }
         post '/signup', params
         follow_redirect!
         expect(last_response.body).not_to include("value=\"user1@email.com\"")
@@ -97,33 +79,24 @@ describe ApplicationController do
     end
 
     context 'without a password' do
+      let!(:params) { {
+        :username => "user1",
+        :email => "user1@email.com",
+        :password => ""
+        } }
+
       it 'does not let a user sign up' do 
-        params = {
-          :username => "user1",
-          :email => "user1@email.com",
-          :password => ""
-        }
         post '/signup', params
         expect(last_response.location).to include('/signup')
       end
 
       it 'displays an error when a user attempts to sign up' do
-        params = {
-          :username => "user1",
-          :email => "user1@email.com",
-          :password => ""
-        }
         post '/signup', params
         follow_redirect!
         expect(last_response.body).to include("Password can't be blank. Please try again.")
       end
 
       it 'populates the username and email fields on the sign up form after validation failure when a user attempts to sign up' do
-        params = {
-          :username => "user1",
-          :email => "user1@email.com",
-          :password => ""
-        }
         post '/signup', params
         follow_redirect!
         expect(last_response.body).to include("value=\"user1@email.com\"")
@@ -132,23 +105,19 @@ describe ApplicationController do
     end
 
     context 'with a duplicate username' do
+      let!(:params) { {
+        :username => "user1",
+        :password => "user1password",
+        :email => "user1@email.com"
+        } }
+
       it 'does not let a user sign up' do
-        params = {
-          :username => "user1",
-          :password => "user1password",
-          :email => "user1@email.com"
-        }
         User.create(params)
         post '/signup', params
         expect(last_response.location).to include('/signup')
       end
 
       it 'displays an error when a user attempts to sign up' do
-        params = {
-          :username => "user1",
-          :password => "user1password",
-          :email => "user1@email.com"
-        }
         User.create(params)
         post '/signup', params
         follow_redirect!
@@ -156,11 +125,6 @@ describe ApplicationController do
       end
 
       it 'populates only the email field on the sign up form after validation failure when a user attempts to sign up' do
-        params = {
-          :username => "user1",
-          :password => "user1password",
-          :email => "user1@email.com"
-        }
         User.create(params)
         post '/signup', params
         follow_redirect!
@@ -221,77 +185,78 @@ describe ApplicationController do
       expect(last_response.location).to include("/categories")
     end
 
-    it 'does not let a user log in without the correct credentials' do
-      params = {
+    context 'without the correct credentials' do
+      let!(:params) { {
         :username => "user1",
         :password => "user1password",
         :email => "user1@email.com"
-      }
+      } }
 
-      incorrect_params = {
+      let!(:incorrect_params) { {
         :username => "",
         :password => ""
-      }
+      } }
 
-      user = User.create(params)
+      it 'does not let a user log in' do
+        user = User.create(params)
 
-      post '/login', incorrect_params
-      expect(last_response.location).to include("/login")
-    end
+        post '/login', incorrect_params
+        expect(last_response.location).to include("/login")
+      end
 
-    it 'displays an error when a user attempts to log in without the correct credentials' do
-      params = {
-        :username => "user1",
-        :password => "user1password",
-        :email => "user1@email.com"
-      }
+      it 'displays an error when a user attempts to log in' do
+        user = User.create(params)
 
-      incorrect_params = {
-        :username => "",
-        :password => ""
-      }
-
-      user = User.create(params)
-
-      post '/login', incorrect_params
-      follow_redirect!
-      expect(last_response.body).to include("Invalid credentials. Please try again.")
+        post '/login', incorrect_params
+        follow_redirect!
+        expect(last_response.body).to include("Invalid credentials. Please try again.")
+      end
     end
   end
 
   describe 'logout' do 
-    it 'lets a user logout if they are already logged in' do 
-      params = {
+    context 'logged in' do
+      let!(:params) { {
         :username => "user1",
-        :password => "user1password"
-      }
-      user = User.create(params.merge(:email => "user1@email.com"))
-
-      post '/login', params
-      get '/logout'
-      expect(last_response.location).to include('/login')
-    end
-
-    it 'does not let a user logout if not logged in' do
-      get '/logout'
-      expect(last_response.location).to include('/')
-    end
-
-    it 'does not load /categories if user not logged in' do
-      get '/categories'
-      expect(last_response.location).to include('/login')
-    end
-
-    it 'does load /categories if user is logged in' do
-      user = User.create(:username => "user1", :email => "user1@emal.com", :password => "user1password")
+        :password => "user1password",
+        :email => "user1@email.com"
+      } }
       
-      visit '/login'
+      it 'lets a user logout' do 
+        params = {
+          :username => "user1",
+          :password => "user1password"
+        }
+        user = User.create(params.merge(:email => "user1@email.com"))
 
-      fill_in(:username, :with => "user1")
-      fill_in(:password, :with => "user1password")
-      click_button 'submit'
+        post '/login', params
+        get '/logout'
+        expect(last_response.location).to include('/login')
+      end
 
-      expect(page.current_path).to eq('/categories')
+      it 'does load /categories' do
+        user = User.create(params)
+        
+        visit '/login'
+
+        fill_in(:username, :with => "user1")
+        fill_in(:password, :with => "user1password")
+        click_button 'submit'
+
+        expect(page.current_path).to eq('/categories')
+      end
+    end
+
+    context 'logged out' do
+      it 'does not let a user logout' do
+        get '/logout'
+        expect(last_response.location).to include('/')
+      end
+
+      it 'does not load /categories' do
+        get '/categories'
+        expect(last_response.location).to include('/login')
+      end
     end
   end
 

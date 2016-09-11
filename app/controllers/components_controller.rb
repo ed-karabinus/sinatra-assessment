@@ -55,6 +55,22 @@ class ComponentsController < ApplicationController
     if is_logged_in? && @component.save
       redirect to("/components/#{@component.id}")
     else
+      errorArray = []
+      @component.errors.messages.each do |key, value|
+        value.each do |warning|
+          errorArray << "#{key.capitalize} #{warning}. Please try again."
+        end
+      end
+      flash[:error] = errorArray
+      if @component.errors.messages[:name].empty?
+        flash[:name] = params[:name]
+      end
+      if @component.errors.messages[:description].empty?
+        flash[:description] = params[:description]
+      end
+      if @component.errors.messages[:category_id].empty?
+        flash[:category_id] = params[:category_id]
+      end
       redirect to('/components/new')
     end
   end
@@ -64,6 +80,13 @@ class ComponentsController < ApplicationController
     if is_logged_in? && @component.category.user_id == session[:id] && @component.update(name: params[:name], description: params[:description], category_id: params[:category_id])
       redirect to("/components/#{params[:id]}")
     else
+      errorArray = []
+      @component.errors.messages.each do |key, value|
+        value.each do |warning|
+          errorArray << "#{key.capitalize} #{warning}. Please try again."
+        end
+      end
+      flash[:error] = errorArray
       redirect to("/components/#{params[:id]}/edit")
     end
   end

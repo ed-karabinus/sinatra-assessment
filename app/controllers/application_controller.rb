@@ -90,13 +90,11 @@ class ApplicationController < Sinatra::Base
         end
       end
       flash[:error] = errorArray
-      if @user.errors.messages[:username].empty? && @user.errors.messages[:email].empty?
-        flash[:email] = params[:email]
+      if @user.errors.messages[:username].empty?
         flash[:username] = params[:username]
-      elsif !@user.errors.messages[:username].empty? && @user.errors.messages[:email].empty?
+      end
+      if @user.errors.messages[:email].empty?
         flash[:email] = params[:email]
-      elsif !@user.errors.messages[:email].empty? && @user.errors.messages[:username].empty?
-        flash[:username] = params[:username]
       end
       redirect to('/signup')
     end
