@@ -217,15 +217,10 @@ describe ApplicationController do
     context 'logged in' do
       let!(:params) { {
         :username => "user1",
-        :password => "user1password",
-        :email => "user1@email.com"
+        :password => "user1password"
       } }
       
       it 'lets a user logout' do 
-        params = {
-          :username => "user1",
-          :password => "user1password"
-        }
         user = User.create(params.merge(:email => "user1@email.com"))
 
         post '/login', params
@@ -233,8 +228,8 @@ describe ApplicationController do
         expect(last_response.location).to include('/login')
       end
 
-      it 'does load /categories' do
-        user = User.create(params)
+      it 'loads /categories' do
+        user = User.create(params.merge(:email => "user1@email.com"))
         
         visit '/login'
 
