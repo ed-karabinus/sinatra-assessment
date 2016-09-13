@@ -1,4 +1,4 @@
-# sinatra-assessment — GearTracker
+# GearTracker
 
 This repository contains GearTracker, my project for the final Sinatra assessment in the Learn-Verified program at the Flatiron School. GearTracker is a CRUD (create, read, update, delete) web app with user accounts and encrypted passwords.
 
