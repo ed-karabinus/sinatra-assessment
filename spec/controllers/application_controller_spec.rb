@@ -5,7 +5,7 @@ describe ApplicationController do
     it 'loads the homepage' do
       get '/'
       expect(last_response.status).to eq(200)
-      expect(last_response.body).to include("Welcome to GearTracker")
+      expect(last_response.body).to include("GearTracker")
     end
   end
 
@@ -167,7 +167,7 @@ describe ApplicationController do
 
       follow_redirect!
       expect(last_response.status).to eq(200)
-      expect(last_response.body).to include("Your categories")
+      expect(last_response.body).to include("Categories")
     end
 
     it 'does not let the user view login page if already logged in' do
@@ -179,7 +179,6 @@ describe ApplicationController do
       user = User.create(params.merge(:email => "user1@email.com"))
 
       post '/login', params
-      # session = { :id => "user.id" }
 
       get '/login'
       expect(last_response.location).to include("/categories")

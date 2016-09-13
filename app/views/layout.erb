@@ -18,6 +18,22 @@
     <![endif]-->
   </head>
   <body>
+    <% if is_logged_in? %>
+      <nav class="navbar navbar-default" role="navigation">
+        <div class="navbar-header">
+          <p class="navbar-brand">GearTracker</p>
+        </div>
+
+        <div>
+          <ul class="nav navbar-nav">
+            <li><a href="/categories">Categories</a></li>
+            <li><a href="/components">Components</a></li>
+            <li><a href="/users/<%= "#{current_user.slug}" %>">User Page</a></li>
+          </ul>
+        </div>
+      </nav>
+    <% end %>
+
     <div class="container-fluid">
       <%= yield %>
     </div>
