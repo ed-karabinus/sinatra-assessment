@@ -3,7 +3,7 @@ require 'spec_helper'
 describe CategoriesController do 
   describe 'new category action' do
     context 'logged in' do
-      it 'lets user view new category form if logged in' do
+      it 'lets user view new category form' do
         user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
 
         visit '/login'
@@ -16,7 +16,7 @@ describe CategoriesController do
         expect(page.status_code).to eq(200)
       end
 
-      it 'lets user create a category that is unique to them if they are logged in' do
+      it 'lets user create a category that is unique to them' do
         user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
         user2 = User.create(:username => "user2", :email => "user2@email.com", :password => "user2password")
 
@@ -40,42 +40,118 @@ describe CategoriesController do
         expect(page.status_code).to eq(200)
       end
 
-      it 'does not let a user create a category with a null name' do 
-        user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+      context 'with a null name' do
+          it 'does not let a user create a category' do 
+            user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
 
-        visit '/login'
+            visit '/login'
 
-        fill_in(:username, :with => "user1")
-        fill_in(:password, :with => "user1password")
-        click_button 'submit'
+            fill_in(:username, :with => "user1")
+            fill_in(:password, :with => "user1password")
+            click_button 'submit'
 
-        visit '/categories/new'
+            visit '/categories/new'
 
-        fill_in(:name, :with => "")
-        fill_in(:description, :with => "Category 1 description.")
-        click_button 'submit'
+            fill_in(:name, :with => "")
+            fill_in(:description, :with => "Category 1 description.")
+            click_button 'submit'
 
-        expect(Category.find_by(:name => "")).to eq(nil)
-        expect(page.current_path).to eq('/categories/new')
+            expect(Category.find_by(:name => "")).to eq(nil)
+            expect(page.current_path).to eq('/categories/new')
+          end
+
+          it 'displays an error message when a user attempts to create a category' do
+            user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+
+            visit '/login'
+
+            fill_in(:username, :with => "user1")
+            fill_in(:password, :with => "user1password")
+            click_button 'submit'
+
+            visit '/categories/new'
+
+            fill_in(:name, :with => "")
+            fill_in(:description, :with => "Category 1 description.")
+            click_button 'submit'
+
+            expect(page.body).to include("Name can't be blank. Please try again.")
+          end
+
+        it 'populates the description field on the category creation form when a user attempts to create a category' do
+            user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+
+            visit '/login'
+
+            fill_in(:username, :with => "user1")
+            fill_in(:password, :with => "user1password")
+            click_button 'submit'
+
+            visit '/categories/new'
+
+            fill_in(:name, :with => "")
+            fill_in(:description, :with => "Category 1 description.")
+            click_button 'submit'
+
+            expect(page.body).to include("Name can't be blank. Please try again.")
+        end
       end
 
-      it 'does not let a user create a category with a null description' do
-        user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+      context 'with a null description' do
+          it 'does not let a user create a category' do
+            user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
 
-        visit '/login'
+            visit '/login'
 
-        fill_in(:username, :with => "user1")
-        fill_in(:password, :with => "user1password")
-        click_button 'submit'
+            fill_in(:username, :with => "user1")
+            fill_in(:password, :with => "user1password")
+            click_button 'submit'
 
-        visit '/categories/new'
+            visit '/categories/new'
 
-        fill_in(:name, :with => "Category 1")
-        fill_in(:description, :with => "")
-        click_button 'submit'
+            fill_in(:name, :with => "category1")
+            fill_in(:description, :with => "")
+            click_button 'submit'
 
-        expect(Category.find_by(:description => "")).to eq(nil)
-        expect(page.current_path).to eq('/categories/new')
+            expect(Category.find_by(:description => "")).to eq(nil)
+            expect(page.current_path).to eq('/categories/new')
+          end
+
+          it 'displays an error message when a user attempts to create a category' do
+            user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+
+            visit '/login'
+
+            fill_in(:username, :with => "user1")
+            fill_in(:password, :with => "user1password")
+            click_button 'submit'
+
+            visit '/categories/new'
+
+            fill_in(:name, :with => "category1")
+            fill_in(:description, :with => "")
+            click_button 'submit'
+
+            expect(page.body).to include("Description can't be blank. Please try again.");
+          end
+
+          it 'populates only the name field when a user attempts to create a category' do
+            user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
+
+            visit '/login'
+
+            fill_in(:username, :with => "user1")
+            fill_in(:password, :with => "user1password")
+            click_button 'submit'
+
+            visit '/categories/new'
+
+            fill_in(:name, :with => "category1")
+            fill_in(:description, :with => "")
+            click_button 'submit'
+
+            expect(page.body).to include("category1");
+          end
       end
     end
 
@@ -148,14 +224,19 @@ describe CategoriesController do
 
   describe 'edit categories action' do 
     context 'logged in' do 
-      it 'lets a user view category edit form if they are logged in' do 
-        user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
-        category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
-        visit '/login'
 
-        fill_in(:username, :with => "user1")
-        fill_in(:password, :with => "user1password")
-        click_button 'submit'
+        let!(:user) { User.create(:username => "user1", :email => "user1@email.com", :password => "user1password") }
+        let!(:category) { Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id) }
+
+        before(:each) do
+            visit '/login'
+
+            fill_in(:username, :with => "user1")
+            fill_in(:password, :with => "user1password")
+            click_button 'submit'
+        end
+
+      it 'lets a user view category edit form' do 
         visit '/categories/1/edit'
         expect(page.status_code).to eq(200)
         expect(page.body).to include(category.name)
@@ -163,32 +244,16 @@ describe CategoriesController do
       end
 
       it 'submits the edit form via a PATCH request' do
-        user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
-        category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
-        visit '/login'
-
-        fill_in(:username, :with => "user1")
-        fill_in(:password, :with => "user1password")
-        click_button 'submit'
         visit '/categories/1/edit'
 
         expect(find("#hidden", :visible => :false).value).to eq("PATCH")
       end
 
       it 'does not let a user edit a category they did not create' do
-        user1 = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
-        category1 = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user1.id)
-
         user2 = User.create(:username => "user2", :email => "user2@email.com", :password => "user2password")
         category2 = Category.create(:name => "category2", :description => "Category 2 description.", :user_id => user2.id)
 
-        visit '/login'
 
-        fill_in(:username, :with => "user1")
-        fill_in(:password, :with => "user1password")
-        click_button 'submit'
-        session = {}
-        session[:user_id] = user1.id
         visit "/categories/#{category2.id}/edit"
         fill_in(:name, :with => "modified_category2")
         click_button 'submit'
@@ -196,14 +261,7 @@ describe CategoriesController do
         expect(Category.find_by(:name => "modified_category2")).to be(nil)
       end
 
-      it 'lets a user edit their own category if they are logged in' do 
-        user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
-        category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
-        visit '/login'
-
-        fill_in(:username, :with => "user1")
-        fill_in(:password, :with => "user1password")
-        click_button 'submit'
+      it 'lets a user edit their own category' do 
         visit "/categories/#{category.id}/edit"
 
         fill_in(:name, :with => "modified_category1")
@@ -215,41 +273,45 @@ describe CategoriesController do
         expect(page.status_code).to eq(200)
       end
 
-      it 'does not let a user edit a category with blank text for the description' do
-        user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
-        category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
-        visit '/login'
+      context 'with blank text for the description' do
+        before(:each) do
+            visit "/categories/#{category.id}/edit"
 
-        fill_in(:username, :with => "user1")
-        fill_in(:password, :with => "user1password")
-        click_button 'submit'
-        visit "/categories/#{category.id}/edit"
+            fill_in(:description, :with => "")
+            click_button 'submit'
+        end
 
-        fill_in(:description, :with => "")
-        click_button 'submit'
-        expect(Category.find_by(:description => "")).to be(nil)
-        expect(page.current_path).to eq("/categories/#{category.id}/edit")
+          it 'does not let a user edit a category' do
+            expect(Category.find_by(:description => "")).to be(nil)
+            expect(page.current_path).to eq("/categories/#{category.id}/edit")
+          end
+
+          it 'displays an error message when a user attempts to edit a category' do
+            expect(page.body).to include("Description can't be blank. Please try again.");
+          end
       end
 
-      it 'does not let a user edit a category with blank text for the name' do
-        user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
-        category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
-        visit '/login'
+      context 'with blank text for the name' do
+        before(:each) do
+            visit "/categories/#{category.id}/edit"
 
-        fill_in(:username, :with => "user1")
-        fill_in(:password, :with => "user1password")
-        click_button 'submit'
-        visit "/categories/#{category.id}/edit"
+            fill_in(:name, :with => "")
+            click_button 'submit'
+        end
 
-        fill_in(:name, :with => "")
-        click_button 'submit'
-        expect(Category.find_by(:name => "")).to be(nil)
-        expect(page.current_path).to eq("/categories/#{category.id}/edit")
+          it 'does not let a user edit a category' do
+            expect(Category.find_by(:name => "")).to be(nil)
+            expect(page.current_path).to eq("/categories/#{category.id}/edit")
+          end
+
+          it 'displays an error message when a user attempts to edit a category' do
+            expect(page.body).to include("Name can't be blank. Please try again.")
+          end
       end
     end
 
     context "logged out" do
-      it 'does not load let user view category edit form if not logged in' do 
+      it 'does not load let user view category edit form' do 
         get '/categories/1/edit'
         expect(last_response.location).to include('/login')
       end
@@ -258,7 +320,7 @@ describe CategoriesController do
 
   describe 'delete categories action' do
     context 'logged in' do
-      it 'lets a user delete their own category if they are logged in' do
+      it 'lets a user delete their own category' do
         user = User.create(:username => "user1", :email => "user1@email.com", :password => "user1password")
         category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => user.id)
         visit '/login'
@@ -308,7 +370,7 @@ describe CategoriesController do
     end
 
     context 'logged out' do
-      it 'does not let a user delete a category if not logged in' do
+      it 'does not let a user delete a category' do
         category = Category.create(:name => "category1", :description => "Category 1 description.", :user_id => 1)
         visit "/categories/#{category.id}"
         expect(page.current_path).to eq("/login")

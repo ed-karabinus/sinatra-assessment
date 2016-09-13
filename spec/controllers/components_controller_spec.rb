@@ -123,14 +123,13 @@ describe ComponentsController do
           choose("#{category.name}")
           click_button 'submit'
 
-          expect(page.body).not_to include("component1")
           expect(page.body).to include("Component 1 description.")
           expect(find("##{category.id}")).to be_checked
         end
       end
 
       context 'with a null description' do
-        it 'does not let a user create a component' do
+        before(:each) do
           visit '/login'
 
           fill_in(:username, :with => "user1")
@@ -143,50 +142,25 @@ describe ComponentsController do
           fill_in(:description, :with => "")
           choose("#{category.name}")
           click_button 'submit'
+        end
 
+        it 'does not let a user create a component' do
           expect(Component.find_by(:description => "")).to eq(nil)
           expect(page.current_path).to eq('/components/new')
         end
 
         it 'displays an error message when a user attempts to create a component' do
-          visit '/login'
-
-          fill_in(:username, :with => "user1")
-          fill_in(:password, :with => "user1password")
-          click_button 'submit'
-
-          visit '/components/new'
-
-          fill_in(:name, :with => "component1")
-          fill_in(:description, :with => "")
-          choose("#{category.name}")
-          click_button 'submit'
-
           expect(page.body).to include("Description can't be blank. Please try again.")
         end
 
         it 'populates only the name and category_id fields on the component creation form when a user attempts to create a component' do
-          visit '/login'
-
-          fill_in(:username, :with => "user1")
-          fill_in(:password, :with => "user1password")
-          click_button 'submit'
-
-          visit '/components/new'
-
-          fill_in(:name, :with => "component1")
-          fill_in(:description, :with => "")
-          choose("#{category.name}")
-          click_button 'submit'
-
           expect(page.body).to include("component1")
-          expect(page.body).not_to include("Component 1 description.")
           expect(find("##{category.id}")).to be_checked
         end
       end
 
       context 'without a category' do
-        it 'does not let a user create a component' do
+        before(:each) do
           visit '/login'
 
           fill_in(:username, :with => "user1")
@@ -198,40 +172,18 @@ describe ComponentsController do
           fill_in(:name, :with => "component1")
           fill_in(:description, :with => "Component 1 description.")
           click_button 'submit'
+        end
 
+        it 'does not let a user create a component' do
           expect(Component.find_by(:description => "")).to eq(nil)
           expect(page.current_path).to eq('/components/new')
         end
 
         it 'displays an error message when a user attempts to create a component' do
-          visit '/login'
-
-          fill_in(:username, :with => "user1")
-          fill_in(:password, :with => "user1password")
-          click_button 'submit'
-
-          visit '/components/new'
-
-          fill_in(:name, :with => "component1")
-          fill_in(:description, :with => "Component 1 description.")
-          click_button 'submit'
-
           expect(page.body).to include("Category_id can't be blank. Please try again.")
         end
 
         it 'populates only the name and description fields on the component creation form when a user attempts to create a component' do
-          visit '/login'
-
-          fill_in(:username, :with => "user1")
-          fill_in(:password, :with => "user1password")
-          click_button 'submit'
-
-          visit '/components/new'
-
-          fill_in(:name, :with => "component1")
-          fill_in(:description, :with => "Component 1 description.")
-          click_button 'submit'
-
           expect(page.body).to include("component1")
           expect(page.body).to include("Component 1 description.")
           expect(find("##{category.id}")).not_to be_checked
@@ -296,12 +248,15 @@ describe ComponentsController do
     let!(:component) { Component.create(:name => "component1", :description => "Component 1 description.", :category_id => category.id) }
 
     context 'logged in' do 
-      it 'lets a user view component edit form' do 
+      before(:each) do
         visit '/login'
 
         fill_in(:username, :with => "user1")
         fill_in(:password, :with => "user1password")
         click_button 'submit'
+      end
+
+      it 'lets a user view component edit form' do 
         visit "/components/#{component.id}/edit"
         expect(page.status_code).to eq(200)
         expect(page.body).to include(component.name)
@@ -309,11 +264,6 @@ describe ComponentsController do
       end
 
       it 'submits the edit form via a PATCH request' do
-        visit '/login'
-
-        fill_in(:username, :with => "user1")
-        fill_in(:password, :with => "user1password")
-        click_button 'submit'
         visit "/components/#{component.id}/edit"
         expect(find("#hidden", :visible => :false).value).to eq("PATCH")
       end
@@ -323,13 +273,6 @@ describe ComponentsController do
         category2 = Category.create(:name => "category2", :description => "Category 2 description.", :user_id => user2.id)
         component2 = Component.create(:name => "component2", :description => "Component 2 description.", :category_id => category2.id) 
 
-        visit '/login'
-
-        fill_in(:username, :with => "user1")
-        fill_in(:password, :with => "user1password")
-        click_button 'submit'
-        session = {}
-        session[:user_id] = user.id
         visit "/components/#{component2.id}/edit"
 
         fill_in(:name, :with => "modified_component2")
@@ -339,11 +282,6 @@ describe ComponentsController do
       end
 
       it 'lets a user edit their own component' do 
-        visit '/login'
-
-        fill_in(:username, :with => "user1")
-        fill_in(:password, :with => "user1password")
-        click_button 'submit'
         visit "/components/#{component.id}/edit"
 
         fill_in(:name, :with => "modified_component1")
@@ -360,11 +298,6 @@ describe ComponentsController do
 
       context 'with blank text for the description' do
         it 'does not let a user edit a component' do
-          visit '/login'
-
-          fill_in(:username, :with => "user1")
-          fill_in(:password, :with => "user1password")
-          click_button 'submit'
           visit "/components/#{component.id}/edit"
 
           fill_in(:description, :with => "")
@@ -374,11 +307,6 @@ describe ComponentsController do
         end
 
         it 'displays an error message when a user attempts to edit a component' do
-          visit '/login'
-
-          fill_in(:username, :with => "user1")
-          fill_in(:password, :with => "user1password")
-          click_button 'submit'
           visit "/components/#{component.id}/edit"
 
           fill_in(:description, :with => "")
@@ -389,31 +317,19 @@ describe ComponentsController do
       end
 
       context 'with blank text for the name' do
-        it 'does not let a user edit a component' do
-          visit '/login'
-
-          fill_in(:username, :with => "user1")
-          fill_in(:password, :with => "user1password")
-          click_button 'submit'
+        before(:each) do
           visit "/components/#{component.id}/edit"
 
           fill_in(:name, :with => "")
           click_button 'submit'
+        end
+
+        it 'does not let a user edit a component' do
           expect(Component.find_by(:name => "")).to be(nil)
           expect(page.current_path).to eq("/components/#{component.id}/edit")
         end
 
         it 'displays an error message when a user attempts to edit a component' do
-          visit '/login'
-
-          fill_in(:username, :with => "user1")
-          fill_in(:password, :with => "user1password")
-          click_button 'submit'
-          visit "/components/#{component.id}/edit"
-
-          fill_in(:name, :with => "")
-          click_button 'submit'
-
           expect(page.body).to include("Name can't be blank. Please try again.")
         end
       end
@@ -433,13 +349,15 @@ describe ComponentsController do
     let!(:component) { Component.create(:name => "component1", :description => "Component 1 description.", :category_id => category.id) }
 
     context 'logged in' do
-      it 'lets a user delete their own component' do
+      before(:each) do
         visit '/login'
 
         fill_in(:username, :with => "user1")
         fill_in(:password, :with => "user1password")
         click_button 'submit'
+      end
 
+      it 'lets a user delete their own component' do
         visit "/components/#{component.id}"
         click_button "Delete Component"
         expect(page.status_code).to eq(200)
@@ -447,12 +365,6 @@ describe ComponentsController do
       end
 
       it 'deletes a component via a DELETE request' do
-        visit '/login'
-
-        fill_in(:username, :with => "user1")
-        fill_in(:password, :with => "user1password")
-        click_button 'submit'
-
         visit "/components/#{component.id}"
         expect(find("#hidden", :visible => :false).value).to eq("DELETE")
       end
@@ -461,12 +373,6 @@ describe ComponentsController do
         user2 = User.create(:username => "user2", :email => "user2@email.com", :password => "user2password")
         category2 = Category.create(:name => "category2", :description => "Category 2 description.", :user_id => user2.id)
         component2 = Component.create(:name => "component2", :description => "Component 2 description.", :category_id => category2.id)
-
-        visit '/login'
-
-        fill_in(:username, :with => "user1")
-        fill_in(:password, :with => "user1password")
-        click_button 'submit'
 
         visit "/components/#{component2.id}"
         click_button "Delete Component"

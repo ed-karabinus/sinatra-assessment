@@ -1,6 +1,11 @@
 <div class="jumbotron text-center">
   <h1><%= @category.name %></h1>
   <h2>Edit category</h2>
+  <% if flash[:error] %>
+    <% flash[:error].each do |warning| %>
+      <p><%= warning %></p>
+    <% end %>
+  <% end %>
 </div>
 <form method="post" action="/categories/<%= @category.id %>/edit">
   <input id="hidden" type="hidden" name="_method" value="PATCH">

@@ -1,14 +1,19 @@
 <div class="jumbotron text-center">
   <h1>Create category</h1>
+  <% if flash[:error] %>
+    <% flash[:error].each do |warning| %>
+      <p><%= warning %></p>
+    <% end %>
+  <% end %>
 </div>
 <form method="post" action="/categories">
   <div class="form-group">
     <label for="name">Category name</label>
-    <input type="text" class="form-control" id="name" placeholder="Category name" name="name">
+    <input type="text" class="form-control" id="name" <%= "value=\"#{flash[:name]}\"" if flash[:name] %> placeholder="Category name" name="name">
   </div>
   <div class="form-group">
     <label for="description">Category description</label>
-    <input type="text" class="form-control" id="description" placeholder="Category description" name="description">
+    <input type="text" class="form-control" id="description" <%= "value=\"#{flash[:description]}\"" if flash[:description] %> placeholder="Category description" name="description">
   </div>
   <button type="submit" value="submit" class="btn btn-primary">Submit</button>
 </form>

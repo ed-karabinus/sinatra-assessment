@@ -50,6 +50,19 @@ class CategoriesController < ApplicationController
     if is_logged_in? && @category.save
       redirect to("/categories/#{@category.id}")
     else
+      errorArray = []
+      @category.errors.messages.each do |key, value|
+        value.each do |warning|
+          errorArray << "#{key.capitalize} #{warning}. Please try again."
+        end
+      end
+      flash[:error] = errorArray
+      if @category.errors.messages[:name].empty?
+        flash[:name] = params[:name]
+      end
+      if @category.errors.messages[:description].empty?
+        flash[:description] = params[:description]
+      end
       redirect to('/categories/new')
     end
   end
@@ -59,6 +72,13 @@ class CategoriesController < ApplicationController
     if is_logged_in? && @category.user_id == session[:id] && @category.update(name: params[:name], description: params[:description])
       redirect to("/categories/#{params[:id]}")
     else
+      errorArray = []
+      @category.errors.messages.each do |key, value|
+        value.each do |warning|
+          errorArray << "#{key.capitalize} #{warning}. Please try again."
+        end
+      end
+      flash[:error] = errorArray
       redirect to("/categories/#{params[:id]}/edit")
     end
   end
