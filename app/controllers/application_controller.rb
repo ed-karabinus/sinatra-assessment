@@ -27,6 +27,24 @@ class ApplicationController < Sinatra::Base
     def current_user
       @user ||= User.find_by(id: session[:id])
     end
+
+    def createErrorArray(model) 
+      errorArray = []
+      model.errors.messages.each do |key, value|
+        value.each do |warning|
+          errorArray << "#{key.capitalize} #{warning}. Please try again."
+        end
+      end
+      errorArray
+    end
+
+    def populateFlashHash(model, attributes)
+      attributes.each do |attribute|
+        unless model.errors.messages.has_key?(attribute)
+          flash.[]=(attribute, params[attribute])
+        end
+      end
+    end
   end
   
 end

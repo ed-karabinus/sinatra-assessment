@@ -65,19 +65,8 @@ class UsersController < ApplicationController
       session[:id] = @user.id
       redirect to('/categories')
     else
-      errorArray = []
-      @user.errors.messages.each do |key, value|
-        value.each do |warning|
-          errorArray << "#{key.capitalize} #{warning}. Please try again."
-        end
-      end
-      flash[:error] = errorArray
-      if @user.errors.messages[:username].empty?
-        flash[:username] = params[:username]
-      end
-      if @user.errors.messages[:email].empty?
-        flash[:email] = params[:email]
-      end
+      flash[:error] = createErrorArray(@user)
+      populateFlashHash(@user, [:username, :email])
       redirect to('/signup')
     end
   end
