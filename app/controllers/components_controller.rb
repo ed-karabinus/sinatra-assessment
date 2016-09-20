@@ -4,9 +4,7 @@ class ComponentsController < ApplicationController
   get '/components/new' do 
     if is_logged_in?
       @title = "Create component"
-      @categories = Category.all.find_all do |category|
-        category.user_id == current_user.id
-      end
+      @categories = current_user.categories
       erb :'components/create_component'
     else
       redirect to('/login')
@@ -27,9 +25,7 @@ class ComponentsController < ApplicationController
   get '/components/:id/edit' do 
     if is_logged_in? && @component = Component.find_by(id: params[:id])
       @title = "Edit #{@component.name}"
-      @categories = Category.all.find_all do |category|
-        category.user_id == current_user.id
-      end
+      @categories = current_user.categories
       erb :'components/edit_component'
     elsif is_logged_in?
       redirect to('/components/:id')
@@ -40,9 +36,7 @@ class ComponentsController < ApplicationController
 
   get '/components' do
     if is_logged_in?
-      @components = Component.all.find_all do |component|
-        component.category.user_id == current_user.id 
-      end
+      @components = current_user.components
       @title = "Your components"
       erb :'components/components'
     else

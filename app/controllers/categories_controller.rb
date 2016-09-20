@@ -35,9 +35,7 @@ class CategoriesController < ApplicationController
 
   get '/categories' do
     if is_logged_in?
-      @categories = Category.all.find_all do |category|
-        category.user_id == current_user.id
-      end
+      @categories = current_user.categories
       @title = "Your categories"
       erb :'categories/categories'
     else

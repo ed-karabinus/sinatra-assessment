@@ -7,4 +7,5 @@ end
 use Rack::MethodOverride
 use CategoriesController
 use ComponentsController
+use UsersController
 run ApplicationController

@@ -2,9 +2,7 @@ class User < ActiveRecord::Base
   has_many :categories
   has_many :components, through: :categories
   has_secure_password
-  validates_presence_of :username, on: :create
-  validates_presence_of :password, on: :create
-  validates_presence_of :email, on: :create
+  validates_presence_of :username, :password, :email, on: :create
   validates_uniqueness_of :username, on: :create
 
   def slug
